@@ -37,7 +37,8 @@
 
 .reveal .slides section {
   height: 100%;
-  padding: 0.35em 0;
+  padding: 0.2em 0 0;
+  box-sizing: border-box;
 }
 
 .reveal h1,
@@ -323,6 +324,10 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 0.65em;
+  height: auto;
+}
+
+.cols > .info-panel {
   height: 100%;
 }
 
@@ -482,6 +487,23 @@
 }
 
 /* Persona hub */
+.slide-personas h2 {
+  margin-bottom: 0.35em;
+}
+
+.slide-personas .lead {
+  margin-bottom: 0.4em;
+}
+
+.slide-personas .info-panel.compact {
+  padding: 0.35em 0.5em;
+  margin-bottom: 0.4em;
+}
+
+.slide-personas .info-panel.compact svg {
+  max-height: 72px;
+}
+
 .persona-hub {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
