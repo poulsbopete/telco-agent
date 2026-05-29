@@ -16,7 +16,7 @@ git clone https://github.com/poulsbopete/telco-agent.git
 cd telco-agent
 ```
 
-Then follow [Setup](#setup) below. Never commit `.env` or `web/.env.local`—they are gitignored and hold your Elastic, Kibana, and Jina credentials.
+Then follow [Setup](#setup) below. Never commit `.env` or `.env.local`—they are gitignored and hold your Elastic, Kibana, and Jina credentials.
 
 ## Presentation slides (GitHub Pages)
 
@@ -69,7 +69,7 @@ Offline demo: exported snapshot → local Docker ES → Next.js /api/rag (+ opti
 cp .env.example .env
 # Fill in ES_URL, ES_API_KEY, KIBANA_BASE_URL, KIBANA_API_KEY, JINA_API_KEY
 
-cp web/env.example web/.env.local
+cp env.example .env.local
 # Set DEMO_MODE=online and Kibana credentials for online demo
 ```
 
@@ -84,7 +84,6 @@ Run the full bootstrap: crawl T-Mobile, index to Serverless, deploy agents.
 Start the UI:
 
 ```bash
-cd web
 npm install
 npm run dev
 # http://localhost:3000/chat
@@ -92,10 +91,11 @@ npm run dev
 
 Deploy to Vercel:
 
-1. Import the repo at [vercel.com/new](https://vercel.com/new) (repo root — root `vercel.json` builds `web/`)
-2. Confirm framework is **Next.js**, not Python
-3. Set env vars in the Vercel project: `KIBANA_BASE_URL`, `KIBANA_API_KEY`, `DEMO_MODE=online`
-4. Open **`/chat`** after deploy
+1. Import the repo at [vercel.com/new](https://vercel.com/new) (repo root — Next.js app lives at root)
+2. Leave **Root Directory** empty (repo root)
+3. Confirm framework is **Next.js**, not Python
+4. Set env vars in the Vercel project: `KIBANA_BASE_URL`, `KIBANA_API_KEY`, `DEMO_MODE=online`
+5. Open **`/chat`** after deploy
 
 ### Configure Jina LLM in Kibana
 
@@ -118,7 +118,7 @@ Agent Builder uses your project's default chat model. In Kibana → Agent Builde
 
 This starts Docker Elasticsearch, imports `data/snapshots/tmobile/telco-tmobile-kb.sample.json` (or full export if present), and runs Next.js with `DEMO_MODE=offline`.
 
-Optional: set `OLLAMA_BASE_URL=http://localhost:11434` in `web/.env.local` for LLM-synthesized answers instead of retrieval-only snippets.
+Optional: set `OLLAMA_BASE_URL=http://localhost:11434` in `.env.local` for LLM-synthesized answers instead of retrieval-only snippets.
 
 ## Personas (T-Mobile v1)
 
@@ -136,7 +136,7 @@ Instructions live in [`agents/personas/`](agents/personas/). Deploy mapping in [
 1. Copy `ingest/seeds/tmobile.yaml` → `att.yaml` / `verizon.yaml`
 2. Add carrier block in `agents/config.yaml`
 3. Create persona markdown files under `agents/personas/`
-4. Enable carrier in `web/lib/personas.ts`
+4. Enable carrier in `lib/personas.ts`
 5. Run crawl → index → deploy for each carrier
 
 ## Project layout
@@ -145,7 +145,9 @@ Instructions live in [`agents/personas/`](agents/personas/). Deploy mapping in [
 ingest/          Jina Reader crawl, chunk, index
 agents/          Persona instructions + Agent Builder deploy
 scripts/         bootstrap, export, import, offline demo
-web/             Next.js UI (Vercel-ready)
+app/             Next.js routes (chat UI, API proxies)
+components/      React UI components
+lib/             Personas, converse client, offline RAG
 docker/          Local Elasticsearch for offline mode
 data/snapshots/  Exported index (sample included for smoke tests)
 ```

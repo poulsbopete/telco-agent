@@ -12,7 +12,6 @@ echo "== Importing snapshot =="
 bash scripts/import-offline.sh
 
 echo "== Starting web UI (offline RAG mode) =="
-cd web
 if [ ! -d node_modules ]; then
   npm install
 fi

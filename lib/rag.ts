@@ -13,7 +13,7 @@ export function loadPersonaInstructions(agentId: string): string {
   if (!file) {
     return "You are a helpful telco assistant. Answer only from provided context.";
   }
-  const personaPath = path.join(process.cwd(), "..", "agents", "personas", file);
+  const personaPath = path.join(process.cwd(), "agents", "personas", file);
   try {
     return fs.readFileSync(personaPath, "utf-8");
   } catch {

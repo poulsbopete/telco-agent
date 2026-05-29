@@ -1,4 +1,4 @@
-# Python ingest/agents — not deployed to Vercel (Next.js app is in web/)
+# Python ingest/agents — not deployed to Vercel (Next.js app is at repo root)
 ingest/
 agents/
 data/
