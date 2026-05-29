@@ -50,6 +50,30 @@ export function interpretKibanaUpstreamError(text: string): string | null {
   return null;
 }
 
+const KIBANA_CONVERSE_FIELDS = new Set([
+  "input",
+  "agent_id",
+  "conversation_id",
+  "action",
+  "connector_id",
+  "inference_id",
+  "prompts",
+  "capabilities",
+  "configuration_overrides",
+  "browser_api_tools",
+  "_execution_mode",
+]);
+
+export function toKibanaConversePayload(body: Record<string, unknown>): Record<string, unknown> {
+  const payload: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(body)) {
+    if (KIBANA_CONVERSE_FIELDS.has(key)) {
+      payload[key] = value;
+    }
+  }
+  return payload;
+}
+
 export async function parseConverseJsonBody(
   req: NextRequest
 ): Promise<
@@ -65,10 +89,11 @@ export async function parseConverseJsonBody(
       response: NextResponse.json({ message: "Invalid JSON body" }, { status: 400 }),
     };
   }
-  const payload: Record<string, unknown> =
+  const payload = toKibanaConversePayload(
     typeof body === "object" && body !== null && !Array.isArray(body)
-      ? { ...(body as Record<string, unknown>) }
-      : {};
+      ? (body as Record<string, unknown>)
+      : {}
+  );
 
   const fromClient = payload.agent_id;
   const clientEmpty =
