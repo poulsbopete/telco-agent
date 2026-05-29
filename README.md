@@ -18,6 +18,26 @@ cd telco-agent
 
 Then follow [Setup](#setup) below. Never commit `.env` or `web/.env.local`—they are gitignored and hold your Elastic, Kibana, and Jina credentials.
 
+## Presentation slides (GitHub Pages)
+
+Professional slide deck for customer demos lives in [`docs/`](docs/).
+
+**Enable GitHub Pages (one-time):**
+
+1. Open [github.com/poulsbopete/telco-agent/settings/pages](https://github.com/poulsbopete/telco-agent/settings/pages)
+2. Under **Build and deployment → Source**, choose **Deploy from a branch**
+3. Branch: **`main`**, folder: **`/docs`**
+4. Save — the site publishes at **https://poulsbopete.github.io/telco-agent/**
+
+**Preview locally:**
+
+```bash
+cd docs && python3 -m http.server 8080
+# Open http://localhost:8080
+```
+
+Use arrow keys or swipe to navigate. Press **O** for slide overview, **F** for fullscreen.
+
 ## Architecture
 
 ```

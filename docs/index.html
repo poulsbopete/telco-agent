@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telco Persona Agent Demo | Elastic + Jina</title>
+    <meta
+      name="description"
+      content="Role-based telco AI agents powered by Elastic Agent Builder, Jina Reader, and semantic search."
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" />
+    <link rel="stylesheet" href="css/telco-theme.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- 1. Title -->
+        <section class="slide-title">
+          <p class="badge badge-elastic">Elastic Agent Builder</p>
+          <h1>Telco Persona Agent Demo</h1>
+          <p class="subtitle">
+            Role-based AI assistants for carriers — grounded in live knowledge,
+            deployable online or air-gapped.
+          </p>
+          <div class="badge-row">
+            <span class="badge badge-elastic">Elasticsearch</span>
+            <span class="badge badge-jina">Jina Reader &amp; Embeddings</span>
+            <span class="badge badge-tmo">T-Mobile v1</span>
+          </div>
+          <p class="meta-line">
+            <a href="https://github.com/poulsbopete/telco-agent">github.com/poulsbopete/telco-agent</a>
+            &nbsp;·&nbsp; Press <kbd>→</kbd> or swipe to advance
+          </p>
+        </section>
+
+        <!-- 2. Agenda -->
+        <section>
+          <h2>Agenda</h2>
+          <ul class="agenda-list">
+            <li>The problem: one-size-fits-all chat fails in telco operations</li>
+            <li>Solution architecture: ingest, index, persona agents, UI</li>
+            <li>Four T-Mobile roles — NOC, Care, Billing, Retail</li>
+            <li>Online demo vs air-gapped offline path</li>
+            <li>Live demo script and repository walkthrough</li>
+            <li>Roadmap: AT&amp;T, Verizon, and NOC telemetry</li>
+          </ul>
+        </section>
+
+        <!-- 3. Challenge -->
+        <section>
+          <h2>The Challenge</h2>
+          <div class="cols">
+            <div>
+              <h3>Why generic LLMs fall short</h3>
+              <ul>
+                <li><strong>Role mismatch</strong> — NOC engineers and retail staff need different tone, tools, and escalation paths</li>
+                <li><strong>Stale knowledge</strong> — plans, promotions, and support flows change constantly</li>
+                <li><strong>Hallucination risk</strong> — billing and network guidance must be grounded in approved content</li>
+                <li><strong>Demo constraints</strong> — enterprise buyers often require air-gapped or offline proof points</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <p>
+                <strong>Goal:</strong> Ship a repeatable demo where each telco persona searches
+                carrier-specific knowledge in Elasticsearch, answers through Elastic Agent Builder,
+                and runs in the field without live cloud dependencies.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Solution -->
+        <section>
+          <h2>Solution at a Glance</h2>
+          <div class="stats">
+            <div class="stat"><span class="num">4</span><span class="label">Role personas</span></div>
+            <div class="stat"><span class="num">1</span><span class="label">Carrier (v1)</span></div>
+            <div class="stat"><span class="num">2</span><span class="label">Demo modes</span></div>
+            <div class="stat"><span class="num">1</span><span class="label">Vector index</span></div>
+          </div>
+          <div class="cols" style="margin-top: 1em">
+            <div class="card card-accent-jina">
+              <h4>Ingest (online prep)</h4>
+              <p>Jina Reader crawls T-Mobile public content → chunk → index with <code>jina-embeddings-v3</code> semantic fields.</p>
+            </div>
+            <div class="card card-accent-elastic">
+              <h4>Reason (online demo)</h4>
+              <p>Elastic Agent Builder agents with <code>index_search</code> tools — persona-specific instructions and grounding rules.</p>
+            </div>
+            <div class="card card-accent-green">
+              <h4>Present (UI)</h4>
+              <p>Next.js chat on Vercel — carrier + role picker, streaming converse proxy to Kibana.</p>
+            </div>
+            <div class="card card-accent-tmo">
+              <h4>Air-gap (offline)</h4>
+              <p>Exported ES snapshot → local Docker → RAG API with optional Ollama synthesis.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Architecture -->
+        <section>
+          <h2>Architecture</h2>
+          <div class="flow">
+            <p class="flow-label">Online preparation</p>
+            <div class="flow-row">
+              <span class="flow-box">Seed URLs</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">Jina Reader</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">Chunker</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box highlight">Elasticsearch<br><small>semantic_text</small></span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box highlight">Agent Builder</span>
+            </div>
+            <p class="flow-label">Online demo</p>
+            <div class="flow-row">
+              <span class="flow-box">Next.js UI</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">/api/converse</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box highlight">Kibana Agent Builder</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">KB search tool</span>
+            </div>
+            <p class="flow-label">Offline demo</p>
+            <div class="flow-row">
+              <span class="flow-box">Index export</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">Local ES :9200</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">/api/rag</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-box">Ollama (optional)</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Ingest pipeline -->
+        <section>
+          <h2>Knowledge Ingest Pipeline</h2>
+          <div class="cols">
+            <div>
+              <h3>Crawl — <code>ingest/crawl.py</code></h3>
+              <ul>
+                <li>BFS over <code>t-mobile.com</code> from seed URLs</li>
+                <li>Jina Reader API → clean markdown + link extraction</li>
+                <li>Persona tags from URL heuristics (<code>/support</code>, <code>/business</code>, …)</li>
+              </ul>
+              <h3>Chunk — <code>ingest/chunk.py</code></h3>
+              <ul>
+                <li>Heading-aware splits ~1000 chars with overlap</li>
+                <li><code>content</code> + <code>body_semantic</code> fields</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Index — <code>ingest/index.py</code></h3>
+              <pre><code class="hljs">PUT /_inference/text_embedding/
+    jina-embeddings-v3
+
+Index: telco-tmobile-kb
+  body_semantic: semantic_text
+  inference_id: jina-embeddings-v3</code></pre>
+              <p class="small">One command bootstrap: <code>./scripts/bootstrap-online.sh</code></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Personas -->
+        <section>
+          <h2>T-Mobile Persona Agents</h2>
+          <p class="small" style="margin-bottom: 0.75em">Each agent shares one KB search tool but uses distinct instructions, tone, and escalation behavior.</p>
+          <div class="persona-grid">
+            <div class="persona-card">
+              <h4>NOC Engineer</h4>
+              <div class="agent-id">tmobile-noc-engineer</div>
+              <p>Outages, 5G/core, coverage maps, business circuit escalation</p>
+            </div>
+            <div class="persona-card">
+              <h4>Customer Care</h4>
+              <div class="agent-id">tmobile-customer-care</div>
+              <p>Plans, devices, troubleshooting, support article guidance</p>
+            </div>
+            <div class="persona-card">
+              <h4>Billing Ops</h4>
+              <div class="agent-id">tmobile-billing-ops</div>
+              <p>Invoice lines, disputes, payment failures, proration</p>
+            </div>
+            <div class="persona-card">
+              <h4>Retail Sales</h4>
+              <div class="agent-id">tmobile-retail-sales</div>
+              <p>Promotions, upgrades, trade-in, in-store offer eligibility</p>
+            </div>
+          </div>
+          <p class="callout" style="margin-top: 0.85em">
+            Grounding rule (all personas): <strong>search the KB first</strong>, cite source URLs, never invent policy or pricing.
+          </p>
+        </section>
+
+        <!-- 8. Agent Builder -->
+        <section>
+          <h2>Elastic Agent Builder</h2>
+          <div class="cols">
+            <div>
+              <h3>Deployed artifacts</h3>
+              <ul>
+                <li><strong>Tool:</strong> <code>telco-tmobile-kb-search</code> (<code>index_search</code> on <code>telco-tmobile-kb</code>)</li>
+                <li><strong>Agents:</strong> 4 personas via <code>agents/deploy.py</code></li>
+                <li><strong>Instructions:</strong> Markdown in <code>agents/personas/</code></li>
+                <li><strong>State:</strong> UUID map written to <code>agents/state/agents.json</code></li>
+              </ul>
+            </div>
+            <div>
+              <pre><code class="hljs">POST /api/agent_builder/converse
+{
+  "agent_id": "tmobile-customer-care",
+  "input": "What unlimited plans
+            does T-Mobile offer?"
+}</code></pre>
+              <p class="small">DELETE + POST pattern ensures instruction updates apply reliably.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. UI -->
+        <section>
+          <h2>Demo UI</h2>
+          <div class="cols">
+            <div>
+              <h3>Next.js + Vercel</h3>
+              <ul>
+                <li>Carrier dropdown (T-Mobile live; AT&amp;T / Verizon scaffolded)</li>
+                <li>Role picker → routes <code>agent_id</code> to Agent Builder</li>
+                <li>SSE streaming via <code>/api/converse/stream</code></li>
+                <li>Conversation resets on persona change</li>
+                <li>T-Mobile magenta theming</li>
+              </ul>
+            </div>
+            <div class="card card-accent-elastic">
+              <h4>Starter prompts (built-in)</h4>
+              <ul>
+                <li>5G coverage verification for business</li>
+                <li>T-Mobile ID password reset steps</li>
+                <li>Line-level bill charges</li>
+                <li>Unlimited plan overview</li>
+              </ul>
+              <p style="margin-top: 0.5em">Local: <code>cd web && npm run dev</code> → <code>/chat</code></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. Online vs Offline -->
+        <section>
+          <h2>Two Demo Modes</h2>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Online</th>
+                <th>Offline (air-gapped)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LLM / reasoning</td>
+                <td>Elastic Agent Builder (Kibana)</td>
+                <td>Ollama or retrieval-only snippets</td>
+              </tr>
+              <tr>
+                <td>Search</td>
+                <td>Serverless ES + live inference</td>
+                <td>Local Docker ES + exported snapshot</td>
+              </tr>
+              <tr>
+                <td>UI endpoint</td>
+                <td><code>/api/converse</code></td>
+                <td><code>/api/rag</code></td>
+              </tr>
+              <tr>
+                <td>Prep required</td>
+                <td>Crawl + index + deploy agents</td>
+                <td><code>export-index.sh</code> once while online</td>
+              </tr>
+              <tr>
+                <td>Run command</td>
+                <td><code>bootstrap-online.sh</code></td>
+                <td><code>run-offline-demo.sh</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 11. Demo script -->
+        <section>
+          <h2>Live Demo Script</h2>
+          <ol style="font-size: 0.62em">
+            <li class="fragment"><strong>Set context</strong> — "Same KB, four roles — watch tone and focus change."</li>
+            <li class="fragment"><strong>Customer Care</strong> — "What unlimited plans does T-Mobile offer?" → cites KB URLs</li>
+            <li class="fragment"><strong>NOC</strong> — "How do I verify 5G coverage for a business address?"</li>
+            <li class="fragment"><strong>Billing</strong> — "Where can customers see line-level charges?"</li>
+            <li class="fragment"><strong>Retail</strong> — "What should I highlight for a family plan upgrade?"</li>
+            <li class="fragment"><strong>Switch to offline</strong> — show local ES + RAG without Kibana connectivity</li>
+          </ol>
+          <p class="callout fragment">
+            If an answer is thin, say: "KB crawl date matters — rerun bootstrap to refresh public content."
+          </p>
+        </section>
+
+        <!-- 12. Tech stack -->
+        <section>
+          <h2>Technology Stack</h2>
+          <div class="cols cols-3">
+            <div class="card card-accent-elastic">
+              <h4>Elastic</h4>
+              <ul>
+                <li>Cloud Serverless</li>
+                <li>semantic_text + jina-embeddings-v3</li>
+                <li>Agent Builder API</li>
+                <li>index_search tools</li>
+              </ul>
+            </div>
+            <div class="card card-accent-jina">
+              <h4>Jina</h4>
+              <ul>
+                <li>Reader (r.jina.ai crawl)</li>
+                <li>Embeddings via ES inference</li>
+                <li>Optional chat model in Kibana</li>
+              </ul>
+            </div>
+            <div class="card card-accent-green">
+              <h4>App layer</h4>
+              <ul>
+                <li>Python ingest + deploy</li>
+                <li>Next.js 16 / React 19</li>
+                <li>Vercel converse proxy</li>
+                <li>Docker ES offline</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13. Repository -->
+        <section>
+          <h2>Repository &amp; Setup</h2>
+          <pre><code class="hljs">git clone git@github.com:poulsbopete/telco-agent.git
+cd telco-agent
+cp .env.example .env          # Elastic + Kibana + Jina keys
+cp web/env.example web/.env.local
+
+./scripts/bootstrap-online.sh   # crawl → index → deploy
+cd web && npm install && npm run dev</code></pre>
+          <div class="cols" style="margin-top: 0.5em">
+            <div class="small">
+              <strong>Never commit</strong> <code>.env</code> or <code>web/.env.local</code>
+            </div>
+            <div class="small" style="text-align: right">
+              Full docs: <a href="https://github.com/poulsbopete/telco-agent#readme">README</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 14. Roadmap -->
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li><strong>AT&amp;T &amp; Verizon</strong> — duplicate seed YAML + persona templates + index per carrier</li>
+            <li><strong>NOC telemetry layer</strong> — fault injection demo (Claro / elastic-launch-demo patterns)</li>
+            <li><strong>Parameterized ES|QL tools</strong> — structured plan lookup, error code search</li>
+            <li><strong>CI</strong> — automated Vercel deploy + index freshness checks</li>
+          </ul>
+          <p class="callout">
+            v1 scope is intentionally demo-ready: T-Mobile KB, four personas, dual online/offline paths.
+          </p>
+        </section>
+
+        <!-- 15. Q&A -->
+        <section class="slide-title">
+          <h2 style="border: none; text-align: center">Questions?</h2>
+          <p class="subtitle" style="margin-top: 1em">
+            Repository, slides, and demo UI — all in one place.
+          </p>
+          <div class="badge-row">
+            <a class="badge badge-elastic" href="https://github.com/poulsbopete/telco-agent">GitHub Repo</a>
+            <a class="badge badge-jina" href="https://github.com/poulsbopete/telco-agent/tree/main/web">Web UI</a>
+            <a class="badge badge-tmo" href="https://www.elastic.co/guide/en/kibana/current/agent-builder.html">Agent Builder Docs</a>
+          </div>
+          <p class="meta-line">Telco Persona Agent Demo · Elastic + Jina</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        progress: true,
+        center: false,
+        width: 1280,
+        height: 720,
+        margin: 0.08,
+        transition: "fade",
+        transitionSpeed: "default",
+        backgroundTransition: "fade",
+        controlsTutorial: true,
+        keyboard: true,
+        overview: true,
+        touch: true,
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 .env
 .env.local
+.env.swp
+*.swp
 *.pyc
 __pycache__/
 .venv/
