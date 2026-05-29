@@ -30,7 +30,7 @@ Then follow [Setup](#setup) below. Never commit `.env` or `.env.local`—they ar
 
 ## Presentation slides (GitHub Pages)
 
-Professional **reveal.js** slide deck — one slide at a time, arrow keys to advance, **O** for overview, **F** for fullscreen.
+Professional **reveal.js** slide deck — **10 consolidated slides** with SVG infographics, arrow keys to advance, **O** for overview, **F** for fullscreen.
 
 | | |
 |---|---|

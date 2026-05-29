@@ -39,6 +39,7 @@
     <div class="reveal">
       <div class="slides">
 
+        <!-- 1 · Title -->
         <section class="slide-title">
           <p class="badge badge-elastic">Elastic Agent Builder</p>
           <h1>Telco Persona Agent Demo</h1>
@@ -46,9 +47,41 @@
             Role-based AI assistants for carriers — grounded in live knowledge,
             deployable online or air-gapped.
           </p>
+          <div class="info-panel" style="max-width: 720px; margin: 0.5em auto 0">
+            <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" aria-label="Platform ecosystem">
+              <defs>
+                <linearGradient id="gElastic" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fec514" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#fec514" stop-opacity="0.05"/>
+                </linearGradient>
+                <linearGradient id="gTmo" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#e20074" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#e20074" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <circle cx="360" cy="100" r="78" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="6 6"/>
+              <circle cx="360" cy="100" r="52" fill="url(#gElastic)" stroke="rgba(254,197,20,0.4)" stroke-width="1.5"/>
+              <text x="360" y="96" text-anchor="middle" fill="#fec514" font-size="13" font-weight="700" font-family="DM Sans, sans-serif">Agent Builder</text>
+              <text x="360" y="114" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">+ semantic search</text>
+              <rect x="48" y="68" width="118" height="64" rx="12" fill="url(#gTmo)" stroke="rgba(226,0,116,0.45)" stroke-width="1.5"/>
+              <text x="107" y="96" text-anchor="middle" fill="#ff6eb4" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">T-Mobile KB</text>
+              <text x="107" y="114" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">4 personas</text>
+              <rect x="554" y="68" width="118" height="64" rx="12" fill="rgba(124,108,255,0.12)" stroke="rgba(124,108,255,0.45)" stroke-width="1.5"/>
+              <text x="613" y="96" text-anchor="middle" fill="#a89bff" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">Jina</text>
+              <text x="613" y="114" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">Reader + embed</text>
+              <rect x="291" y="12" width="138" height="44" rx="10" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+              <text x="360" y="38" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Next.js / Vercel UI</text>
+              <rect x="291" y="144" width="138" height="44" rx="10" fill="rgba(34,211,238,0.08)" stroke="rgba(34,211,238,0.35)" stroke-width="1.5"/>
+              <text x="360" y="170" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Offline RAG path</text>
+              <path d="M166 100 H302" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end="url(#none)"/>
+              <path d="M418 100 H554" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+              <path d="M360 56 V68" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+              <path d="M360 132 V144" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+            </svg>
+          </div>
           <div class="badge-row">
             <span class="badge badge-elastic">Elasticsearch</span>
-            <span class="badge badge-jina">Jina Reader &amp; Embeddings</span>
+            <span class="badge badge-jina">Jina Reader</span>
             <span class="badge badge-tmo">T-Mobile v1</span>
           </div>
           <p class="meta-line">
@@ -57,341 +90,364 @@
             <a href="https://poulsbopete.github.io/telco-agent/">Slides</a>
             &nbsp;·&nbsp;
             <a href="https://github.com/poulsbopete/telco-agent#deploy-to-vercel">Live chat demo</a>
-            &nbsp;·&nbsp; Press <kbd>→</kbd> or swipe to advance &nbsp;·&nbsp; <kbd>O</kbd> overview
+            &nbsp;·&nbsp; <kbd>→</kbd> advance &nbsp;·&nbsp; <kbd>O</kbd> overview
           </p>
         </section>
 
+        <!-- 2 · Problem & vision -->
         <section>
-          <h2>Agenda</h2>
-          <ul class="agenda-list">
-            <li>The problem: one-size-fits-all chat fails in telco operations</li>
-            <li>Solution architecture: ingest, index, persona agents, UI</li>
-            <li>Four T-Mobile roles — NOC, Care, Billing, Retail</li>
-            <li>Online demo vs air-gapped offline path</li>
-            <li>Live demo script and repository walkthrough</li>
-            <li>Roadmap: AT&amp;T, Verizon, and NOC telemetry</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>The Challenge</h2>
-          <div class="cols">
-            <div>
-              <h3>Why generic LLMs fall short</h3>
-              <ul>
-                <li><strong>Role mismatch</strong> — NOC engineers and retail staff need different tone, tools, and escalation paths</li>
-                <li><strong>Stale knowledge</strong> — plans, promotions, and support flows change constantly</li>
-                <li><strong>Hallucination risk</strong> — billing and network guidance must be grounded in approved content</li>
-                <li><strong>Demo constraints</strong> — enterprise buyers often require air-gapped or offline proof points</li>
-              </ul>
+          <h2>Why persona agents for telco</h2>
+          <p class="lead">Generic chat fails operations teams. Each role needs different tone, tools, and grounding — with proof it works offline.</p>
+          <div class="cols cols-67">
+            <div class="pain-grid">
+              <div class="pain-card">
+                <div class="pain-icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+                <div><h4>Role mismatch</h4><p>NOC, care, billing, and retail need different escalation paths and vocabulary.</p></div>
+              </div>
+              <div class="pain-card">
+                <div class="pain-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+                <div><h4>Stale knowledge</h4><p>Plans, promos, and support flows change faster than model training cycles.</p></div>
+              </div>
+              <div class="pain-card">
+                <div class="pain-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+                <div><h4>Hallucination risk</h4><p>Billing and network guidance must cite approved carrier content.</p></div>
+              </div>
+              <div class="pain-card">
+                <div class="pain-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+                <div><h4>Air-gap demos</h4><p>Enterprise buyers often require offline proof without live cloud calls.</p></div>
+              </div>
             </div>
-            <div class="callout">
-              <p>
-                <strong>Goal:</strong> Ship a repeatable demo where each telco persona searches
-                carrier-specific knowledge in Elasticsearch, answers through Elastic Agent Builder,
-                and runs in the field without live cloud dependencies.
-              </p>
+            <div class="callout" style="margin-top: 0; height: 100%; display: flex; align-items: center">
+              <p><strong>Vision:</strong> One repeatable platform — crawl carrier content, index with semantic search, deploy role-specific Agent Builder personas, and demo online <em>or</em> air-gapped from an exported snapshot.</p>
             </div>
           </div>
         </section>
 
+        <!-- 3 · Platform overview -->
         <section>
-          <h2>Solution at a Glance</h2>
-          <div class="stats">
-            <div class="stat"><span class="num">4</span><span class="label">Role personas</span></div>
+          <h2>Platform at a glance</h2>
+          <div class="stats" style="margin-bottom: 0.65em">
+            <div class="stat"><span class="num">4</span><span class="label">Personas</span></div>
             <div class="stat"><span class="num">1</span><span class="label">Carrier (v1)</span></div>
             <div class="stat"><span class="num">2</span><span class="label">Demo modes</span></div>
-            <div class="stat"><span class="num">1</span><span class="label">Vector index</span></div>
+            <div class="stat"><span class="num">22k+</span><span class="label">KB chunks</span></div>
           </div>
-          <div class="cols" style="margin-top: 1em">
-            <div class="card card-accent-jina">
-              <h4>Ingest (online prep)</h4>
-              <p>Jina Reader crawls T-Mobile public content → chunk → index with <code>jina-embeddings-v3</code> semantic fields.</p>
-            </div>
-            <div class="card card-accent-elastic">
-              <h4>Reason (online demo)</h4>
-              <p>Elastic Agent Builder agents with <code>index_search</code> tools — persona-specific instructions and grounding rules.</p>
-            </div>
-            <div class="card card-accent-green">
-              <h4>Present (UI)</h4>
-              <p>Next.js chat on Vercel — carrier + role picker, streaming converse proxy to Kibana.</p>
-            </div>
-            <div class="card card-accent-tmo">
-              <h4>Air-gap (offline)</h4>
-              <p>Exported ES snapshot → local Docker → RAG API with optional Ollama synthesis.</p>
-            </div>
+          <div class="info-panel compact">
+            <svg viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg" aria-label="Four platform pillars">
+              <defs>
+                <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="rgba(255,255,255,0.35)"/>
+                </marker>
+              </defs>
+              <g font-family="DM Sans, sans-serif">
+                <rect x="20" y="30" width="190" height="100" rx="14" fill="rgba(124,108,255,0.1)" stroke="rgba(124,108,255,0.45)" stroke-width="1.5"/>
+                <text x="115" y="62" text-anchor="middle" fill="#a89bff" font-size="14" font-weight="700">1 · Ingest</text>
+                <text x="115" y="84" text-anchor="middle" fill="#a1a1aa" font-size="11">Jina Reader crawl</text>
+                <text x="115" y="102" text-anchor="middle" fill="#a1a1aa" font-size="11">chunk + embed</text>
+                <path d="M215 80 H245" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#arrow)"/>
+                <rect x="250" y="30" width="190" height="100" rx="14" fill="rgba(254,197,20,0.08)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/>
+                <text x="345" y="62" text-anchor="middle" fill="#fec514" font-size="14" font-weight="700">2 · Index</text>
+                <text x="345" y="84" text-anchor="middle" fill="#a1a1aa" font-size="11">telco-tmobile-kb</text>
+                <text x="345" y="102" text-anchor="middle" fill="#a1a1aa" font-size="11">semantic_text</text>
+                <path d="M445 80 H475" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#arrow)"/>
+                <rect x="480" y="30" width="190" height="100" rx="14" fill="rgba(254,197,20,0.12)" stroke="rgba(254,197,20,0.5)" stroke-width="1.5"/>
+                <text x="575" y="62" text-anchor="middle" fill="#fec514" font-size="14" font-weight="700">3 · Agents</text>
+                <text x="575" y="84" text-anchor="middle" fill="#a1a1aa" font-size="11">4 personas +</text>
+                <text x="575" y="102" text-anchor="middle" fill="#a1a1aa" font-size="11">index_search tool</text>
+                <path d="M675 80 H705" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#arrow)"/>
+                <rect x="710" y="30" width="170" height="100" rx="14" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.45)" stroke-width="1.5"/>
+                <text x="795" y="62" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700">4 · Demo</text>
+                <text x="795" y="84" text-anchor="middle" fill="#a1a1aa" font-size="11">Vercel UI or</text>
+                <text x="795" y="102" text-anchor="middle" fill="#a1a1aa" font-size="11">offline RAG</text>
+              </g>
+            </svg>
+            <p class="info-caption">End-to-end flow · bootstrap with <code>./scripts/bootstrap-online.sh</code></p>
           </div>
         </section>
 
+        <!-- 4 · Architecture -->
         <section>
           <h2>Architecture</h2>
-          <div class="flow">
-            <p class="flow-label">Online preparation</p>
-            <div class="flow-row">
-              <span class="flow-box">Seed URLs</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">Jina Reader</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">Chunker</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box highlight">Elasticsearch<br><small>semantic_text</small></span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box highlight">Agent Builder</span>
+          <p class="lead">Three paths share one knowledge index — online prep, live Agent Builder demo, and air-gapped RAG.</p>
+          <div class="info-panel">
+            <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" aria-label="System architecture">
+              <defs>
+                <linearGradient id="laneOnline" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="rgba(254,197,20,0.15)"/>
+                  <stop offset="100%" stop-color="rgba(254,197,20,0.02)"/>
+                </linearGradient>
+                <linearGradient id="laneDemo" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="rgba(52,211,153,0.12)"/>
+                  <stop offset="100%" stop-color="rgba(52,211,153,0.02)"/>
+                </linearGradient>
+                <linearGradient id="laneOffline" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="rgba(34,211,238,0.1)"/>
+                  <stop offset="100%" stop-color="rgba(34,211,238,0.02)"/>
+                </linearGradient>
+              </defs>
+              <!-- Lane backgrounds -->
+              <rect x="10" y="20" width="880" height="78" rx="10" fill="url(#laneOnline)" stroke="rgba(254,197,20,0.2)" stroke-width="1"/>
+              <rect x="10" y="118" width="880" height="78" rx="10" fill="url(#laneDemo)" stroke="rgba(52,211,153,0.2)" stroke-width="1"/>
+              <rect x="10" y="216" width="880" height="78" rx="10" fill="url(#laneOffline)" stroke="rgba(34,211,238,0.2)" stroke-width="1"/>
+              <!-- Labels -->
+              <text x="28" y="48" fill="#fec514" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">ONLINE PREP</text>
+              <text x="28" y="146" fill="#34d399" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">LIVE DEMO</text>
+              <text x="28" y="244" fill="#22d3ee" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">OFFLINE</text>
+              <!-- Boxes helper -->
+              <g font-family="DM Sans, sans-serif" font-size="11" font-weight="600">
+                <!-- Prep row -->
+                <rect x="130" y="52" width="88" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="174" y="74" text-anchor="middle" fill="#f4f4f5">Seed URLs</text>
+                <text x="228" y="74" fill="#71717a">→</text>
+                <rect x="240" y="52" width="88" height="36" rx="8" fill="rgba(124,108,255,0.12)" stroke="rgba(124,108,255,0.35)" stroke-width="1"/><text x="284" y="74" text-anchor="middle" fill="#a89bff">Jina Reader</text>
+                <text x="338" y="74" fill="#71717a">→</text>
+                <rect x="350" y="52" width="72" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="386" y="74" text-anchor="middle" fill="#f4f4f5">Chunker</text>
+                <text x="430" y="74" fill="#71717a">→</text>
+                <rect x="442" y="44" width="120" height="52" rx="8" fill="rgba(254,197,20,0.12)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/><text x="502" y="66" text-anchor="middle" fill="#fec514">Elasticsearch</text><text x="502" y="82" text-anchor="middle" fill="#a1a1aa" font-size="9" font-weight="400">telco-tmobile-kb</text>
+                <text x="572" y="74" fill="#71717a">→</text>
+                <rect x="584" y="44" width="120" height="52" rx="8" fill="rgba(254,197,20,0.15)" stroke="rgba(254,197,20,0.5)" stroke-width="1.5"/><text x="644" y="66" text-anchor="middle" fill="#fec514">Agent Builder</text><text x="644" y="82" text-anchor="middle" fill="#a1a1aa" font-size="9" font-weight="400">deploy agents</text>
+                <!-- Demo row -->
+                <rect x="130" y="150" width="100" height="36" rx="8" fill="rgba(52,211,153,0.12)" stroke="rgba(52,211,153,0.35)" stroke-width="1"/><text x="180" y="172" text-anchor="middle" fill="#34d399">Next.js UI</text>
+                <text x="240" y="172" fill="#71717a">→</text>
+                <rect x="252" y="150" width="110" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="307" y="172" text-anchor="middle" fill="#f4f4f5">/api/converse</text>
+                <text x="372" y="172" fill="#71717a">→</text>
+                <rect x="384" y="142" width="130" height="52" rx="8" fill="rgba(254,197,20,0.12)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/><text x="449" y="164" text-anchor="middle" fill="#fec514">Kibana</text><text x="449" y="180" text-anchor="middle" fill="#a1a1aa" font-size="9" font-weight="400">Agent Builder</text>
+                <text x="524" y="172" fill="#71717a">→</text>
+                <rect x="536" y="150" width="130" height="36" rx="8" fill="rgba(226,0,116,0.1)" stroke="rgba(226,0,116,0.35)" stroke-width="1"/><text x="601" y="172" text-anchor="middle" fill="#ff6eb4">KB search tool</text>
+                <!-- Offline row -->
+                <rect x="130" y="248" width="110" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="185" y="270" text-anchor="middle" fill="#f4f4f5">Index export</text>
+                <text x="250" y="270" fill="#71717a">→</text>
+                <rect x="262" y="248" width="100" height="36" rx="8" fill="rgba(34,211,238,0.1)" stroke="rgba(34,211,238,0.35)" stroke-width="1"/><text x="312" y="270" text-anchor="middle" fill="#22d3ee">Local ES</text>
+                <text x="372" y="270" fill="#71717a">→</text>
+                <rect x="384" y="248" width="90" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="429" y="270" text-anchor="middle" fill="#f4f4f5">/api/rag</text>
+                <text x="484" y="270" fill="#71717a">→</text>
+                <rect x="496" y="248" width="110" height="36" rx="8" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="551" y="270" text-anchor="middle" fill="#f4f4f5">Ollama (opt)</text>
+              </g>
+              <!-- Vertical connector to shared index -->
+              <path d="M502 96 V118" stroke="rgba(254,197,20,0.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path d="M502 196 V216" stroke="rgba(34,211,238,0.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <text x="760" y="172" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Shared index:</text>
+              <text x="760" y="188" fill="#fec514" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace">telco-tmobile-kb</text>
+            </svg>
+          </div>
+        </section>
+
+        <!-- 5 · Data pipeline -->
+        <section>
+          <h2>Knowledge pipeline</h2>
+          <div class="cols cols-73">
+            <div class="info-panel compact">
+              <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" aria-label="Ingest funnel">
+                <defs>
+                  <linearGradient id="funnel" x1="0.5" y1="0" x2="0.5" y2="1">
+                    <stop offset="0%" stop-color="rgba(124,108,255,0.25)"/>
+                    <stop offset="100%" stop-color="rgba(254,197,20,0.2)"/>
+                  </linearGradient>
+                </defs>
+                <path d="M60 30 L360 30 L320 90 L100 90 Z" fill="rgba(124,108,255,0.15)" stroke="rgba(124,108,255,0.4)" stroke-width="1.5"/>
+                <text x="210" y="58" text-anchor="middle" fill="#a89bff" font-size="13" font-weight="700" font-family="DM Sans, sans-serif">t-mobile.com · BFS crawl</text>
+                <text x="210" y="76" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Jina Reader → markdown</text>
+                <path d="M210 90 V108" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                <path d="M80 120 L340 120 L300 175 L120 175 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                <text x="210" y="145" text-anchor="middle" fill="#f4f4f5" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">Heading-aware chunks</text>
+                <text x="210" y="163" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">~1k chars · persona tags</text>
+                <path d="M210 175 V193" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                <path d="M100 205 L320 205 L280 265 L140 265 Z" fill="url(#funnel)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/>
+                <text x="210" y="230" text-anchor="middle" fill="#fec514" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">telco-tmobile-kb</text>
+                <text x="210" y="248" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">body_semantic · jina-embeddings-v3</text>
+                <path d="M210 265 V283" stroke="rgba(254,197,20,0.4)" stroke-width="1.5"/>
+                <rect x="110" y="288" width="200" height="40" rx="10" fill="rgba(254,197,20,0.12)" stroke="rgba(254,197,20,0.5)" stroke-width="1.5"/>
+                <text x="210" y="313" text-anchor="middle" fill="#fec514" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Agent Builder index_search</text>
+              </svg>
             </div>
-            <p class="flow-label">Online demo</p>
-            <div class="flow-row">
-              <span class="flow-box">Next.js UI</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">/api/converse</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box highlight">Kibana Agent Builder</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">KB search tool</span>
-            </div>
-            <p class="flow-label">Offline demo</p>
-            <div class="flow-row">
-              <span class="flow-box">Index export</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">Local ES :9200</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">/api/rag</span>
-              <span class="flow-arrow">→</span>
-              <span class="flow-box">Ollama (optional)</span>
+            <div>
+              <div class="card card-accent-jina" style="margin-bottom: 0.5em">
+                <h4>Crawl · <code>ingest/crawl.py</code></h4>
+                <p>BFS from seed URLs · Jina Reader API · persona tags from URL paths</p>
+              </div>
+              <div class="card card-accent-elastic" style="margin-bottom: 0.5em">
+                <h4>Index · <code>ingest/index.py</code></h4>
+                <p><code>semantic_text</code> field · Serverless-compatible bulk ingest · inference endpoint</p>
+              </div>
+              <div class="card card-accent-green">
+                <h4>Deploy · <code>agents/deploy.py</code></h4>
+                <p>Tool <code>telco-tmobile-kb-search</code> + 4 persona agents with markdown instructions</p>
+              </div>
+              <p class="callout"><strong>Grounding rule:</strong> search KB first, cite source URLs, never invent pricing or policy.</p>
             </div>
           </div>
         </section>
 
+        <!-- 6 · Personas -->
         <section>
-          <h2>Knowledge Ingest Pipeline</h2>
-          <div class="cols">
-            <div>
-              <h3>Crawl — <code>ingest/crawl.py</code></h3>
-              <ul>
-                <li>BFS over <code>t-mobile.com</code> from seed URLs</li>
-                <li>Jina Reader API → clean markdown + link extraction</li>
-                <li>Persona tags from URL heuristics (<code>/support</code>, <code>/business</code>, …)</li>
-              </ul>
-              <h3>Chunk — <code>ingest/chunk.py</code></h3>
-              <ul>
-                <li>Heading-aware splits ~1000 chars with overlap</li>
-                <li><code>content</code> + <code>body_semantic</code> fields</li>
-              </ul>
-            </div>
-            <div>
-              <h3>Index — <code>ingest/index.py</code></h3>
-              <pre><code class="hljs">PUT /_inference/text_embedding/
-    jina-embeddings-v3
-
-Index: telco-tmobile-kb
-  body_semantic: semantic_text
-  inference_id: jina-embeddings-v3</code></pre>
-              <p class="small">One command bootstrap: <code>./scripts/bootstrap-online.sh</code></p>
-            </div>
+          <h2>Four T-Mobile personas</h2>
+          <p class="lead">Same knowledge index — different instructions, tone, and starter prompts per role.</p>
+          <div class="info-panel compact" style="margin-bottom: 0.55em">
+            <svg viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" aria-label="Persona hub diagram">
+              <circle cx="450" cy="60" r="36" fill="rgba(254,197,20,0.15)" stroke="rgba(254,197,20,0.5)" stroke-width="1.5"/>
+              <text x="450" y="56" text-anchor="middle" fill="#fec514" font-size="10" font-weight="700" font-family="DM Sans, sans-serif">telco-</text>
+              <text x="450" y="70" text-anchor="middle" fill="#fec514" font-size="10" font-weight="700" font-family="DM Sans, sans-serif">tmobile-kb</text>
+              <line x1="120" y1="60" x2="408" y2="60" stroke="rgba(226,0,116,0.35)" stroke-width="1.5"/>
+              <line x1="492" y1="60" x2="780" y2="60" stroke="rgba(226,0,116,0.35)" stroke-width="1.5"/>
+              <line x1="180" y1="30" x2="420" y2="48" stroke="rgba(226,0,116,0.25)" stroke-width="1.5"/>
+              <line x1="720" y1="30" x2="480" y2="48" stroke="rgba(226,0,116,0.25)" stroke-width="1.5"/>
+              <line x1="180" y1="90" x2="420" y2="72" stroke="rgba(226,0,116,0.25)" stroke-width="1.5"/>
+              <line x1="720" y1="90" x2="480" y2="72" stroke="rgba(226,0,116,0.25)" stroke-width="1.5"/>
+              <rect x="20" y="38" width="130" height="44" rx="10" fill="rgba(226,0,116,0.1)" stroke="rgba(226,0,116,0.4)" stroke-width="1.5"/>
+              <text x="85" y="58" text-anchor="middle" fill="#ff6eb4" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">NOC Engineer</text>
+              <text x="85" y="72" text-anchor="middle" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace">tmobile-noc-engineer</text>
+              <rect x="750" y="38" width="130" height="44" rx="10" fill="rgba(226,0,116,0.1)" stroke="rgba(226,0,116,0.4)" stroke-width="1.5"/>
+              <text x="815" y="58" text-anchor="middle" fill="#ff6eb4" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Customer Care</text>
+              <text x="815" y="72" text-anchor="middle" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace">tmobile-customer-care</text>
+              <rect x="20" y="10" width="130" height="44" rx="10" fill="rgba(226,0,116,0.08)" stroke="rgba(226,0,116,0.35)" stroke-width="1.5"/>
+              <text x="85" y="30" text-anchor="middle" fill="#ff6eb4" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Billing Ops</text>
+              <text x="85" y="44" text-anchor="middle" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace">tmobile-billing-ops</text>
+              <rect x="750" y="10" width="130" height="44" rx="10" fill="rgba(226,0,116,0.08)" stroke="rgba(226,0,116,0.35)" stroke-width="1.5"/>
+              <text x="815" y="30" text-anchor="middle" fill="#ff6eb4" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Retail Sales</text>
+              <text x="815" y="44" text-anchor="middle" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace">tmobile-retail-sales</text>
+            </svg>
           </div>
-        </section>
-
-        <section>
-          <h2>T-Mobile Persona Agents</h2>
-          <p class="small" style="margin-bottom: 0.75em">Each agent shares one KB search tool but uses distinct instructions, tone, and escalation behavior.</p>
-          <div class="persona-grid">
+          <div class="persona-hub">
             <div class="persona-card">
+              <div class="role-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
               <h4>NOC Engineer</h4>
               <div class="agent-id">tmobile-noc-engineer</div>
-              <p>Outages, 5G/core, coverage maps, business circuit escalation</p>
+              <p>Outages · 5G/core · coverage · business escalation</p>
             </div>
             <div class="persona-card">
+              <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div>
               <h4>Customer Care</h4>
               <div class="agent-id">tmobile-customer-care</div>
-              <p>Plans, devices, troubleshooting, support article guidance</p>
+              <p>Plans · devices · troubleshooting · support articles</p>
             </div>
             <div class="persona-card">
+              <div class="role-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
               <h4>Billing Ops</h4>
               <div class="agent-id">tmobile-billing-ops</div>
-              <p>Invoice lines, disputes, payment failures, proration</p>
+              <p>Invoice lines · disputes · payments · proration</p>
             </div>
             <div class="persona-card">
+              <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg></div>
               <h4>Retail Sales</h4>
               <div class="agent-id">tmobile-retail-sales</div>
-              <p>Promotions, upgrades, trade-in, in-store offer eligibility</p>
+              <p>Promotions · upgrades · trade-in · in-store offers</p>
             </div>
           </div>
-          <p class="callout" style="margin-top: 0.85em">
-            Grounding rule (all personas): <strong>search the KB first</strong>, cite source URLs, never invent policy or pricing.
-          </p>
         </section>
 
+        <!-- 7 · Demo modes + UI -->
         <section>
-          <h2>Elastic Agent Builder</h2>
+          <h2>Demo modes &amp; UI</h2>
           <div class="cols">
-            <div>
-              <h3>Deployed artifacts</h3>
-              <ul>
-                <li><strong>Tool:</strong> <code>telco-tmobile-kb-search</code> (<code>index_search</code> on <code>telco-tmobile-kb</code>)</li>
-                <li><strong>Agents:</strong> 4 personas via <code>agents/deploy.py</code></li>
-                <li><strong>Instructions:</strong> Markdown in <code>agents/personas/</code></li>
-                <li><strong>State:</strong> UUID map written to <code>agents/state/agents.json</code></li>
-              </ul>
+            <div class="info-panel compact">
+              <svg viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg" aria-label="Online vs offline comparison">
+                <rect x="10" y="10" width="190" height="260" rx="14" fill="rgba(52,211,153,0.08)" stroke="rgba(52,211,153,0.35)" stroke-width="1.5"/>
+                <text x="105" y="38" text-anchor="middle" fill="#34d399" font-size="14" font-weight="700" font-family="DM Sans, sans-serif">ONLINE</text>
+                <text x="30" y="68" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Reasoning</text>
+                <text x="30" y="84" fill="#f4f4f5" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Agent Builder (Kibana)</text>
+                <text x="30" y="112" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">API</text>
+                <text x="30" y="128" fill="#f4f4f5" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">/api/converse/stream</text>
+                <text x="30" y="156" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Search</text>
+                <text x="30" y="172" fill="#f4f4f5" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Serverless ES + inference</text>
+                <text x="30" y="200" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Bootstrap</text>
+                <text x="30" y="216" fill="#f4f4f5" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">bootstrap-online.sh</text>
+                <rect x="220" y="10" width="190" height="260" rx="14" fill="rgba(34,211,238,0.06)" stroke="rgba(34,211,238,0.35)" stroke-width="1.5"/>
+                <text x="315" y="38" text-anchor="middle" fill="#22d3ee" font-size="14" font-weight="700" font-family="DM Sans, sans-serif">OFFLINE</text>
+                <text x="240" y="68" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Reasoning</text>
+                <text x="240" y="84" fill="#f4f4f5" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Ollama or retrieval-only</text>
+                <text x="240" y="112" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">API</text>
+                <text x="240" y="128" fill="#f4f4f5" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">/api/rag</text>
+                <text x="240" y="156" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Search</text>
+                <text x="240" y="172" fill="#f4f4f5" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Docker ES + snapshot</text>
+                <text x="240" y="200" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Run</text>
+                <text x="240" y="216" fill="#f4f4f5" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">run-offline-demo.sh</text>
+                <line x1="210" y1="20" x2="210" y2="260" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5 4"/>
+              </svg>
             </div>
             <div>
-              <pre><code class="hljs">POST /api/agent_builder/converse
+              <h3>Next.js chat · Vercel</h3>
+              <ul style="font-size: 0.58em">
+                <li>Carrier + role picker → routes <code>agent_id</code></li>
+                <li>SSE streaming with sync fallback</li>
+                <li>Role-specific starter prompts</li>
+                <li>Links to slides + GitHub in header</li>
+              </ul>
+              <pre style="margin-top: 0.45em"><code>POST /api/agent_builder/converse
 {
   "agent_id": "tmobile-customer-care",
   "input": "What unlimited plans
             does T-Mobile offer?"
 }</code></pre>
-              <p class="small">DELETE + POST pattern ensures instruction updates apply reliably.</p>
+              <p class="small">Env: <code>KIBANA_BASE_URL</code> must use <strong>.kb.</strong> hostname, not <strong>.es.</strong></p>
             </div>
           </div>
         </section>
 
+        <!-- 8 · Live demo script -->
         <section>
-          <h2>Demo UI</h2>
-          <div class="cols">
-            <div>
-              <h3>Next.js + Vercel</h3>
-              <ul>
-                <li>Carrier dropdown (T-Mobile live; AT&amp;T / Verizon scaffolded)</li>
-                <li>Role picker → routes <code>agent_id</code> to Agent Builder</li>
-                <li>SSE streaming via <code>/api/converse/stream</code></li>
-                <li>Conversation resets on persona change</li>
-                <li>T-Mobile magenta theming</li>
-              </ul>
-            </div>
-            <div class="card card-accent-elastic">
-              <h4>Starter prompts (built-in)</h4>
-              <ul>
-                <li>5G coverage verification for business</li>
-                <li>T-Mobile ID password reset steps</li>
-                <li>Line-level bill charges</li>
-                <li>Unlimited plan overview</li>
-              </ul>
-              <p style="margin-top: 0.5em">Local: <code>cd web && npm run dev</code> → <code>/chat</code></p>
-            </div>
+          <h2>Live demo walkthrough</h2>
+          <p class="lead">~8 minutes · same KB, four roles — watch tone and grounding change.</p>
+          <div class="demo-timeline">
+            <div class="demo-step"><div class="step-num">01</div><h4>Set context</h4><p>"Same index, four personas — each searches before answering."</p></div>
+            <div class="demo-step"><div class="step-num">02</div><h4>Customer Care</h4><p>"What unlimited plans does T-Mobile offer?" → cites KB URLs</p></div>
+            <div class="demo-step"><div class="step-num">03</div><h4>NOC Engineer</h4><p>"How do I verify 5G coverage for a business address?"</p></div>
+            <div class="demo-step"><div class="step-num">04</div><h4>Billing Ops</h4><p>"Where can customers see line-level charges?"</p></div>
+            <div class="demo-step"><div class="step-num">05</div><h4>Retail Sales</h4><p>"What should I highlight for a family plan upgrade?"</p></div>
+            <div class="demo-step"><div class="step-num">06</div><h4>Offline path</h4><p>Local ES + <code>/api/rag</code> without Kibana connectivity</p></div>
+          </div>
+          <div class="cols" style="margin-top: 0.55em">
+            <pre><code>git clone git@github.com:poulsbopete/telco-agent.git
+./scripts/bootstrap-online.sh
+npm install && npm run dev  →  /chat</code></pre>
+            <div class="callout"><p><strong>Thin answer?</strong> KB freshness depends on crawl date — rerun bootstrap to refresh public T-Mobile content.</p></div>
           </div>
         </section>
 
+        <!-- 9 · Stack & roadmap -->
         <section>
-          <h2>Two Demo Modes</h2>
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Online</th>
-                <th>Offline (air-gapped)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>LLM / reasoning</td>
-                <td>Elastic Agent Builder (Kibana)</td>
-                <td>Ollama or retrieval-only snippets</td>
-              </tr>
-              <tr>
-                <td>Search</td>
-                <td>Serverless ES + live inference</td>
-                <td>Local Docker ES + exported snapshot</td>
-              </tr>
-              <tr>
-                <td>UI endpoint</td>
-                <td><code>/api/converse</code></td>
-                <td><code>/api/rag</code></td>
-              </tr>
-              <tr>
-                <td>Prep required</td>
-                <td>Crawl + index + deploy agents</td>
-                <td><code>export-index.sh</code> once while online</td>
-              </tr>
-              <tr>
-                <td>Run command</td>
-                <td><code>bootstrap-online.sh</code></td>
-                <td><code>run-offline-demo.sh</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <section>
-          <h2>Live Demo Script</h2>
-          <ol style="font-size: 0.62em">
-            <li class="fragment"><strong>Set context</strong> — "Same KB, four roles — watch tone and focus change."</li>
-            <li class="fragment"><strong>Customer Care</strong> — "What unlimited plans does T-Mobile offer?" → cites KB URLs</li>
-            <li class="fragment"><strong>NOC</strong> — "How do I verify 5G coverage for a business address?"</li>
-            <li class="fragment"><strong>Billing</strong> — "Where can customers see line-level charges?"</li>
-            <li class="fragment"><strong>Retail</strong> — "What should I highlight for a family plan upgrade?"</li>
-            <li class="fragment"><strong>Switch to offline</strong> — show local ES + RAG without Kibana connectivity</li>
-          </ol>
-          <p class="callout fragment">
-            If an answer is thin, say: "KB crawl date matters — rerun bootstrap to refresh public content."
-          </p>
-        </section>
-
-        <section>
-          <h2>Technology Stack</h2>
-          <div class="cols cols-3">
+          <h2>Stack &amp; roadmap</h2>
+          <div class="cols cols-3" style="margin-bottom: 0.55em">
             <div class="card card-accent-elastic">
               <h4>Elastic</h4>
-              <ul>
-                <li>Cloud Serverless</li>
-                <li>semantic_text + jina-embeddings-v3</li>
-                <li>Agent Builder API</li>
-                <li>index_search tools</li>
-              </ul>
+              <ul><li>Cloud Serverless</li><li>semantic_text + jina-embeddings-v3</li><li>Agent Builder + index_search</li></ul>
             </div>
             <div class="card card-accent-jina">
               <h4>Jina</h4>
-              <ul>
-                <li>Reader (r.jina.ai crawl)</li>
-                <li>Embeddings via ES inference</li>
-                <li>Optional chat model in Kibana</li>
-              </ul>
+              <ul><li>Reader (r.jina.ai)</li><li>Embeddings via ES inference</li><li>Optional chat model in Kibana</li></ul>
             </div>
             <div class="card card-accent-green">
               <h4>App layer</h4>
-              <ul>
-                <li>Python ingest + deploy</li>
-                <li>Next.js 16 / React 19</li>
-                <li>Vercel converse proxy</li>
-                <li>Docker ES offline</li>
-              </ul>
+              <ul><li>Python ingest + deploy</li><li>Next.js / Vercel UI</li><li>Docker ES offline</li></ul>
             </div>
           </div>
-        </section>
-
-        <section>
-          <h2>Repository &amp; Setup</h2>
-          <pre><code class="hljs">git clone git@github.com:poulsbopete/telco-agent.git
-cd telco-agent
-cp .env.example .env
-cp web/env.example web/.env.local
-
-./scripts/bootstrap-online.sh
-cd web && npm install && npm run dev</code></pre>
-          <div class="cols" style="margin-top: 0.5em">
-            <div class="small"><strong>Never commit</strong> <code>.env</code> or <code>web/.env.local</code></div>
-            <div class="small" style="text-align: right">Docs: <a href="https://github.com/poulsbopete/telco-agent#readme">README</a></div>
+          <div class="roadmap-row">
+            <div class="roadmap-pill"><strong>AT&amp;T / Verizon</strong>Seed YAML + persona templates per carrier</div>
+            <div class="roadmap-pill"><strong>NOC telemetry</strong>Fault injection + observability layer</div>
+            <div class="roadmap-pill"><strong>ES|QL tools</strong>Structured plan lookup &amp; error codes</div>
+            <div class="roadmap-pill"><strong>CI</strong>Vercel deploy + index freshness checks</div>
           </div>
+          <p class="callout">v1 is demo-ready: T-Mobile KB, four personas, dual online/offline paths.</p>
         </section>
 
-        <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li><strong>AT&amp;T &amp; Verizon</strong> — duplicate seed YAML + persona templates + index per carrier</li>
-            <li><strong>NOC telemetry layer</strong> — fault injection demo (Claro / elastic-launch-demo patterns)</li>
-            <li><strong>Parameterized ES|QL tools</strong> — structured plan lookup, error code search</li>
-            <li><strong>CI</strong> — automated Vercel deploy + index freshness checks</li>
-          </ul>
-          <p class="callout">v1 scope is intentionally demo-ready: T-Mobile KB, four personas, dual online/offline paths.</p>
-        </section>
-
+        <!-- 10 · Close -->
         <section class="slide-title">
           <h2 style="border: none; text-align: center">Questions?</h2>
-          <p class="subtitle" style="margin-top: 1em">Repository, slides, and demo UI — all in one place.</p>
+          <p class="subtitle" style="margin-top: 0.75em">Repository · slides · live chat — one platform.</p>
+          <div class="info-panel" style="max-width: 520px; margin: 0.75em auto">
+            <svg viewBox="0 0 520 80" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="20" width="140" height="44" rx="10" fill="rgba(254,197,20,0.1)" stroke="rgba(254,197,20,0.4)" stroke-width="1.5"/>
+              <text x="80" y="47" text-anchor="middle" fill="#fec514" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">GitHub Repo</text>
+              <rect x="190" y="20" width="140" height="44" rx="10" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+              <text x="260" y="47" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Live Chat</text>
+              <rect x="370" y="20" width="140" height="44" rx="10" fill="rgba(226,0,116,0.1)" stroke="rgba(226,0,116,0.4)" stroke-width="1.5"/>
+              <text x="440" y="47" text-anchor="middle" fill="#ff6eb4" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Slides</text>
+            </svg>
+          </div>
           <div class="badge-row">
             <a class="badge badge-elastic" href="https://github.com/poulsbopete/telco-agent">GitHub Repo</a>
             <a class="badge badge-jina" href="https://github.com/poulsbopete/telco-agent#deploy-to-vercel">Live Chat Demo</a>
             <a class="badge badge-tmo" href="https://poulsbopete.github.io/telco-agent/">Presentation Slides</a>
           </div>
-          <p class="meta-line">Telco Persona Agent Demo · Elastic + Jina</p>
+          <p class="meta-line">Telco Persona Agent Demo · Elastic + Jina · T-Mobile v1</p>
         </section>
 
       </div>
