@@ -94,8 +94,19 @@ Deploy to Vercel:
 1. Import the repo at [vercel.com/new](https://vercel.com/new) (repo root — Next.js app lives at root)
 2. Leave **Root Directory** empty (repo root)
 3. Confirm framework is **Next.js**, not Python
-4. Set env vars in the Vercel project: `KIBANA_BASE_URL`, `KIBANA_API_KEY`, `DEMO_MODE=online`
-5. Open **`/chat`** after deploy
+4. Set env vars in the Vercel project (Production + Preview):
+   - `KIBANA_BASE_URL` = `https://ai-assistants-ffcafb.kb.us-east-1.aws.elastic.cloud` (**`.kb.`**, not `.es.`)
+   - `KIBANA_API_KEY` = your Kibana API key
+   - `DEMO_MODE` = `online`
+5. Redeploy after changing env vars (Deployments → … → Redeploy)
+6. Open **`/api/kibana-health`** — should show `"ok": true` and `"urlKind": "kibana"`
+7. Open **`/chat`** after deploy
+
+### Troubleshooting: `no handler found for uri [/api/agent_builder/converse]`
+
+That JSON error comes from **Elasticsearch**, not Kibana. It means `KIBANA_BASE_URL` is set to your **`.es.`** endpoint instead of **`.kb.`**.
+
+Fix in Vercel → Settings → Environment Variables, then redeploy. Verify at `/api/kibana-health`.
 
 ### Configure Jina LLM in Kibana
 

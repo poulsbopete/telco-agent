@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  interpretKibanaUpstreamError,
   parseConverseJsonBody,
   requireKibanaConverseEnv,
 } from "@/lib/kibana-converse-request";
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest) {
   }
 
   const text = await r.text();
+  const hint = !r.ok ? interpretKibanaUpstreamError(text) : null;
+  const body = hint ? JSON.stringify({ message: hint, error: text }) : text;
   const ct = r.headers.get("content-type") || "application/json; charset=utf-8";
-  return new NextResponse(text, { status: r.status, headers: { "Content-Type": ct } });
+  return new NextResponse(body, { status: r.status, headers: { "Content-Type": ct } });
 }

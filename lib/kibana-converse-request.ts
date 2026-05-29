@@ -19,7 +19,35 @@ export function requireKibanaConverseEnv(): KibanaConverseEnv {
       ),
     };
   }
+  if (/\.es\./.test(base) && !/\.kb\./.test(base)) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        {
+          message:
+            "KIBANA_BASE_URL must be your Kibana endpoint (*.kb.*.elastic.cloud), not Elasticsearch (*.es.*). Copy the Kibana URL from Elastic Cloud project settings.",
+        },
+        { status: 503 }
+      ),
+    };
+  }
   return { ok: true, base, key };
+}
+
+export function interpretKibanaUpstreamError(text: string): string | null {
+  if (text.includes("no handler found for uri [/api/agent_builder/converse]")) {
+    return (
+      "Upstream rejected /api/agent_builder/converse. KIBANA_BASE_URL is likely set to Elasticsearch (*.es.*) " +
+      "instead of Kibana (*.kb.*), or Agent Builder is not enabled on this project."
+    );
+  }
+  if (text.includes("not found or not available")) {
+    return (
+      'Agent not found in Kibana Agent Builder. Run `python agents/deploy.py` (or `./scripts/bootstrap-online.sh`) ' +
+      "to create the tmobile-* persona agents."
+    );
+  }
+  return null;
 }
 
 export async function parseConverseJsonBody(
