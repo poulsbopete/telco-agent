@@ -2,6 +2,16 @@
 
 Role-based telco assistants (T-Mobile, AT&T, Verizon scaffold) powered by **Elastic Agent Builder**, **Jina Reader** ingest, **Jina embeddings** in Elasticsearch, and a **Next.js/Vercel** chat UI—with an **offline RAG** demo path using exported index snapshots.
 
+## Quick links
+
+| Resource | Link |
+|----------|------|
+| **Live chat demo** | Deploy to [Vercel](https://vercel.com/new) → open **`/chat`** on your deployment |
+| **Presentation slides** | [poulsbopete.github.io/telco-agent](https://poulsbopete.github.io/telco-agent/) |
+| **GitHub repository** | [github.com/poulsbopete/telco-agent](https://github.com/poulsbopete/telco-agent) |
+
+The [Vercel chat UI](#deploy-to-vercel) links back to the slides; the [slide deck](#presentation-slides-github-pages) links to the repo and live demo.
+
 ## Clone the repository
 
 ```bash
@@ -24,8 +34,9 @@ Professional **reveal.js** slide deck — one slide at a time, arrow keys to adv
 
 | | |
 |---|---|
-| **Live URL** | https://poulsbopete.github.io/telco-agent/ |
+| **Live URL** | [**Open slides →**](https://poulsbopete.github.io/telco-agent/) |
 | **Source files** | [`slides/`](slides/) (canonical) and [`docs/`](docs/) (synced copy) |
+| **Live chat demo** | Vercel deployment → **`/chat`** (see [Deploy to Vercel](#deploy-to-vercel)) |
 
 ### Enable GitHub Pages (required — use GitHub Actions)
 
@@ -100,7 +111,7 @@ Deploy to Vercel:
    - `DEMO_MODE` = `online`
 5. Redeploy after changing env vars (Deployments → … → Redeploy)
 6. Open **`/api/kibana-health`** — should show `"ok": true` and `"urlKind": "kibana"`
-7. Open **`/chat`** after deploy
+7. Open **`/chat`** after deploy — header links to [presentation slides](https://poulsbopete.github.io/telco-agent/) and [GitHub](https://github.com/poulsbopete/telco-agent)
 
 ### Troubleshooting: `no handler found for uri [/api/agent_builder/converse]`
 

@@ -11,9 +11,11 @@ import {
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import {
+  ExternalLink,
   Headphones,
   LoaderIcon,
   Network,
+  Presentation,
   Receipt,
   RotateCcw,
   SendIcon,
@@ -30,6 +32,7 @@ import {
   type TelcoRole,
 } from "@/lib/personas";
 import { consumeAgentBuilderSse, converseStreamUrl } from "@/lib/converse-stream-client";
+import { PUBLIC_GITHUB_REPO_URL, PUBLIC_SLIDES_URL } from "@/lib/site-links";
 
 type ChatMsg = {
   id: string;
@@ -252,6 +255,27 @@ export function TelcoAIChat() {
             Select a role below. Each agent connects to a dedicated Elastic Agent Builder
             assistant with T-Mobile knowledge base search.
           </p>
+          <nav className="flex flex-wrap items-center justify-center gap-2 pt-1">
+            <a
+              href={PUBLIC_SLIDES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            >
+              <Presentation className="h-3.5 w-3.5" />
+              Presentation slides
+              <ExternalLink className="h-3 w-3 opacity-50" />
+            </a>
+            <a
+              href={PUBLIC_GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            >
+              GitHub repo
+              <ExternalLink className="h-3 w-3 opacity-50" />
+            </a>
+          </nav>
         </header>
 
         <AgentSelector
