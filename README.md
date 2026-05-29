@@ -20,23 +20,32 @@ Then follow [Setup](#setup) below. Never commit `.env` or `web/.env.local`—the
 
 ## Presentation slides (GitHub Pages)
 
-Professional slide deck for customer demos lives in [`docs/`](docs/).
+Professional **reveal.js** slide deck — one slide at a time, arrow keys to advance, **O** for overview, **F** for fullscreen.
 
-**Enable GitHub Pages (one-time):**
+| | |
+|---|---|
+| **Live URL** | https://poulsbopete.github.io/telco-agent/ |
+| **Source files** | [`slides/`](slides/) (canonical) and [`docs/`](docs/) (synced copy) |
 
-1. Open [github.com/poulsbopete/telco-agent/settings/pages](https://github.com/poulsbopete/telco-agent/settings/pages)
-2. Under **Build and deployment → Source**, choose **Deploy from a branch**
-3. Branch: **`main`**, folder: **`/docs`**
-4. Save — the site publishes at **https://poulsbopete.github.io/telco-agent/**
+### Enable GitHub Pages (required — use GitHub Actions)
 
-**Preview locally:**
+The README must **not** be your homepage. Jekyll was rendering it as a docs page instead of the slide deck.
+
+1. Open [Settings → Pages](https://github.com/poulsbopete/telco-agent/settings/pages)
+2. Under **Build and deployment → Source**, choose **GitHub Actions** (not “Deploy from a branch”)
+3. Push to `main` — the workflow [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes the `slides/` folder
+4. Wait ~1 minute, then hard-refresh: **https://poulsbopete.github.io/telco-agent/**
+
+You should see a dark fullscreen title slide (“Telco Persona Agent Demo”), not this README text.
+
+**If you still see the README:** Pages source is still set to branch `/ (root)` or Jekyll is active. Switch to **GitHub Actions** and hard-refresh (Cmd+Shift+R).
+
+### Preview locally
 
 ```bash
-cd docs && python3 -m http.server 8080
-# Open http://localhost:8080
+cd slides && python3 -m http.server 8080
+# Open http://localhost:8080 — use arrow keys to navigate
 ```
-
-Use arrow keys or swipe to navigate. Press **O** for slide overview, **F** for fullscreen.
 
 ## Architecture
 
