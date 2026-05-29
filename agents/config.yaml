@@ -42,6 +42,5 @@ tools:
     type: index_search
     pattern: telco-tmobile-kb
     description: >
-      Search the T-Mobile knowledge base for plans, support articles, business
-      offerings, coverage, billing, and retail promotions. Always search before
-      answering factual questions.
+      Search the T-Mobile knowledge base once per question with a focused natural-language
+      query. Returns support articles, plans, coverage, billing, and retail content.

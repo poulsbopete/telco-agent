@@ -143,6 +143,7 @@ export function TelcoAIChat() {
 
         const streamId = newMsgId();
         let streamed = false;
+        let statusHint = "Searching knowledge base…";
 
         try {
           const streamResp = await fetch(streamEndpoint, {
@@ -163,12 +164,24 @@ export function TelcoAIChat() {
               /\bapplication\/octet-stream\b/i.test(ct));
 
           if (useStream) {
-            streamed = true;
-            setMessages((m) => [...m, { id: streamId, role: "assistant", text: "" }]);
+            setMessages((m) => [
+              ...m,
+              { id: streamId, role: "assistant", text: statusHint },
+            ]);
             let buffer = "";
-            await consumeAgentBuilderSse(streamResp.body, {
+            const gotText = await consumeAgentBuilderSse(streamResp.body, {
               onConversationId: (id) => {
                 conversationIdRef.current = id;
+              },
+              onReasoning: (reasoning) => {
+                statusHint = reasoning.slice(0, 120);
+                setMessages((m) =>
+                  m.map((msg) =>
+                    msg.id === streamId && !buffer.trim()
+                      ? { ...msg, text: statusHint }
+                      : msg
+                  )
+                );
               },
               onTextChunk: (chunk) => {
                 buffer += chunk;
@@ -183,13 +196,22 @@ export function TelcoAIChat() {
                 );
               },
             });
-            if (!buffer.trim()) {
-              setMessages((m) =>
-                m.map((msg) =>
-                  msg.id === streamId ? { ...msg, text: "(Empty reply from agent)" } : msg
-                )
-              );
+            if (gotText && buffer.trim()) {
+              streamed = true;
+            } else {
+              setMessages((m) => m.filter((msg) => msg.id !== streamId));
             }
+          } else if (!streamResp.ok) {
+            const errText = await streamResp.text();
+            let errMsg = errText;
+            try {
+              const errJson = JSON.parse(errText) as Record<string, unknown>;
+              if (typeof errJson.message === "string") errMsg = errJson.message;
+            } catch {
+              /* use raw */
+            }
+            appendError(errMsg || `HTTP ${streamResp.status}`);
+            return;
           }
         } catch {
           streamed = false;

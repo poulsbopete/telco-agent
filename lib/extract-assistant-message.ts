@@ -24,5 +24,15 @@ export function extractAssistantMessage(data: unknown): string {
     }
   }
 
+  if (Array.isArray(o.steps)) {
+    for (let i = o.steps.length - 1; i >= 0; i--) {
+      const step = o.steps[i];
+      if (step && typeof step === "object") {
+        const s = step as Record<string, unknown>;
+        if (typeof s.message === "string") return s.message;
+      }
+    }
+  }
+
   return "";
 }

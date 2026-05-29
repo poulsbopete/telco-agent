@@ -50,11 +50,16 @@ def ensure_inference(client: httpx.Client, es_url: str, es_key: str) -> None:
             "max_input_tokens": 8192,
         },
     }
-    resp = client.put(
-        f"{es_url}/_inference/text_embedding/{INFERENCE_ID}",
-        headers=es_headers(es_key),
-        json=body,
-    )
+    try:
+        resp = client.put(
+            f"{es_url}/_inference/text_embedding/{INFERENCE_ID}",
+            headers=es_headers(es_key),
+            json=body,
+            timeout=15.0,
+        )
+    except httpx.TimeoutException:
+        print("WARN inference: timed out (skipping — endpoint may already exist)")
+        return
     if resp.status_code >= 300 and resp.status_code != 409:
         print(f"WARN inference: HTTP {resp.status_code} {resp.text[:200]}")
 
@@ -81,6 +86,39 @@ def deploy_tool(client: httpx.Client, kibana_url: str, kibana_key: str, tool_cfg
         return False
     print(f"OK tool {tool_id}")
     return True
+
+
+def deploy_skill(client: httpx.Client, kibana_url: str, kibana_key: str) -> bool:
+    skill_path = ROOT / "agents/skills/telco-demo-fast.md"
+    content = skill_path.read_text(encoding="utf-8")
+    body = {
+        "id": "telco-demo-fast",
+        "name": "Telco demo fast path",
+        "description": "Low-latency demo responses: one KB search, concise cited answers.",
+        "content": content,
+    }
+    resp = client.put(
+        f"{kibana_url}/api/agent_builder/skills/telco-demo-fast",
+        headers=kibana_headers(kibana_key),
+        json=body,
+    )
+    if resp.status_code == 404:
+        resp = client.post(
+            f"{kibana_url}/api/agent_builder/skills",
+            headers=kibana_headers(kibana_key),
+            json=body,
+        )
+    if resp.status_code >= 300:
+        print(f"WARN skill telco-demo-fast: HTTP {resp.status_code} {resp.text[:200]}", file=sys.stderr)
+        return False
+    print("OK skill telco-demo-fast")
+    return True
+
+
+def build_instructions(persona_path: Path, fast_skill_path: Path) -> str:
+    persona = persona_path.read_text(encoding="utf-8").strip()
+    fast_skill = fast_skill_path.read_text(encoding="utf-8").strip()
+    return f"{persona}\n\n---\n\n{fast_skill}\n"
 
 
 def deploy_agent(
@@ -150,14 +188,16 @@ def deploy_all() -> dict:
 
     with httpx.Client(timeout=120.0) as client:
         ensure_inference(client, es_url, es_key)
+        deploy_skill(client, kibana_url, kibana_key)
         if deploy_tool(client, kibana_url, kibana_key, tool_cfg):
             tool_ids.append(tool_cfg["id"])
             state["tools"].append(tool_cfg["id"])
 
         carrier_state: dict = {"roles": {}}
+        fast_skill_path = ROOT / "agents/skills/telco-demo-fast.md"
         for role_key, role in carrier["roles"].items():
             persona_path = personas_dir / role["persona_file"]
-            instructions = persona_path.read_text(encoding="utf-8")
+            instructions = build_instructions(persona_path, fast_skill_path)
             agent_uuid = deploy_agent(
                 client,
                 kibana_url,

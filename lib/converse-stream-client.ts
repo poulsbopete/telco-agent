@@ -19,22 +19,33 @@ function parseSseFrame(raw: string): { event: string; data: string } | null {
   return { event, data: dataLines.join("\n") };
 }
 
+/** Agent Builder SSE wraps payloads in `{ data: { ... } }`. */
+function unwrapEventPayload(json: Record<string, unknown>): Record<string, unknown> {
+  const inner = json.data;
+  if (inner && typeof inner === "object" && !Array.isArray(inner)) {
+    return inner as Record<string, unknown>;
+  }
+  return json;
+}
+
 export type StreamCallbacks = {
   onConversationId?: (id: string) => void;
   onTextChunk?: (chunk: string) => void;
   onCompleteMessage?: (full: string) => void;
+  onReasoning?: (text: string) => void;
 };
 
 export async function consumeAgentBuilderSse(
   body: ReadableStream<Uint8Array> | null,
   callbacks: StreamCallbacks,
   signal?: AbortSignal
-): Promise<void> {
+): Promise<boolean> {
   if (!body) throw new Error("No response body");
 
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let carry = "";
+  let gotText = false;
 
   const onAbort = () => {
     void reader.cancel("aborted");
@@ -55,7 +66,7 @@ export async function consumeAgentBuilderSse(
       return;
     }
     if (!json || typeof json !== "object") return;
-    const o = json as Record<string, unknown>;
+    const o = unwrapEventPayload(json as Record<string, unknown>);
 
     if (
       (event === "conversation_id_set" || event === "conversation_created") &&
@@ -64,11 +75,17 @@ export async function consumeAgentBuilderSse(
       callbacks.onConversationId?.(o.conversation_id);
     }
 
+    if (event === "reasoning" && typeof o.reasoning === "string") {
+      callbacks.onReasoning?.(o.reasoning);
+    }
+
     if (event === "message_chunk" && typeof o.text_chunk === "string") {
+      gotText = true;
       callbacks.onTextChunk?.(o.text_chunk);
     }
 
     if (event === "message_complete" && typeof o.message_content === "string") {
+      gotText = true;
       callbacks.onCompleteMessage?.(o.message_content);
     }
 
@@ -76,6 +93,14 @@ export async function consumeAgentBuilderSse(
       const r = o.round as Record<string, unknown>;
       if (typeof r.conversation_id === "string") {
         callbacks.onConversationId?.(r.conversation_id);
+      }
+      const response = r.response;
+      if (response && typeof response === "object") {
+        const msg = (response as Record<string, unknown>).message;
+        if (typeof msg === "string" && msg.trim()) {
+          gotText = true;
+          callbacks.onCompleteMessage?.(msg);
+        }
       }
     }
   };
@@ -106,4 +131,6 @@ export async function consumeAgentBuilderSse(
       /* already released */
     }
   }
+
+  return gotText;
 }

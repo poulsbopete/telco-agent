@@ -119,6 +119,16 @@ That JSON error comes from **Elasticsearch**, not Kibana. It means `KIBANA_BASE_
 
 Fix in Vercel → Settings → Environment Variables, then redeploy. Verify at `/api/kibana-health`.
 
+### Slow responses or empty replies
+
+Agent Builder runs **multiple LLM + tool rounds** (often 15–60s). The UI streams SSE from Kibana; if you saw `(Empty reply from agent)`, that was a parser bug (fixed) — not a missing answer.
+
+**Elastic-side speed tips:**
+
+- Redeploy agents after pulling latest: `python agents/deploy.py` (embeds `agents/skills/telco-demo-fast.md` — one KB search, concise answers)
+- Custom skill **`telco-demo-fast`** is also in Kibana → Agent Builder → Skills (assign manually in UI if needed)
+- Vercel Hobby plan limits serverless functions to **10s** — use Pro for `/api/converse` (up to 120s) or rely on streaming (tokens appear as they arrive)
+
 ### Configure Jina LLM in Kibana
 
 Agent Builder uses your project's default chat model. In Kibana → Agent Builder settings, select a Jina or Elastic-managed chat model if available. Vector search uses the `jina-embeddings-v3` inference endpoint created by `ingest/index.py` and `agents/deploy.py`.
