@@ -334,8 +334,93 @@
 }
 
 .info-panel.compact svg {
-  max-height: 280px;
+  max-height: 220px;
 }
+
+.slide-pipeline .pipeline-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45em;
+  margin-bottom: 0.55em;
+}
+
+.slide-pipeline .pipeline-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5em 0.55em;
+  text-align: center;
+  position: relative;
+}
+
+.slide-pipeline .pipeline-step:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -0.42em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.75em;
+  z-index: 1;
+}
+
+.slide-pipeline .pipeline-step .step-label {
+  display: block;
+  font-size: 0.44em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.25em;
+}
+
+.slide-pipeline .pipeline-step.step-jina { border-top: 3px solid var(--accent); }
+.slide-pipeline .pipeline-step.step-jina .step-label { color: #a89bff; }
+.slide-pipeline .pipeline-step.step-chunk { border-top: 3px solid rgba(255,255,255,0.35); }
+.slide-pipeline .pipeline-step.step-chunk .step-label { color: var(--muted); }
+.slide-pipeline .pipeline-step.step-index { border-top: 3px solid var(--elastic); }
+.slide-pipeline .pipeline-step.step-index .step-label { color: var(--elastic); }
+.slide-pipeline .pipeline-step.step-agent { border-top: 3px solid var(--success); }
+.slide-pipeline .pipeline-step.step-agent .step-label { color: var(--success); }
+
+.slide-pipeline .pipeline-step h4 {
+  font-size: 0.56em;
+  margin: 0 0 0.15em;
+  line-height: 1.25;
+}
+
+.slide-pipeline .pipeline-step p {
+  font-size: 0.44em;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.slide-pipeline .card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45em;
+}
+
+.slide-pipeline .card {
+  padding: 0.5em 0.6em;
+}
+
+.slide-pipeline .card h4 {
+  font-size: 0.56em;
+  margin-bottom: 0.2em;
+}
+
+.slide-pipeline .card p {
+  font-size: 0.46em;
+  line-height: 1.35;
+}
+
+.slide-pipeline .callout {
+  margin-top: 0.45em;
+  padding: 0.45em 0.65em;
+  font-size: 0.5em;
+}
+
 
 .info-caption {
   font-size: 0.48em;
@@ -547,5 +632,14 @@
   .demo-timeline,
   .roadmap-row {
     grid-template-columns: 1fr;
+  }
+
+  .slide-pipeline .pipeline-steps,
+  .slide-pipeline .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .slide-pipeline .pipeline-step:not(:last-child)::after {
+    display: none;
   }
 }

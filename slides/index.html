@@ -232,49 +232,73 @@
         </section>
 
         <!-- 5 · Data pipeline -->
-        <section>
+        <section class="slide-pipeline">
           <h2>Knowledge pipeline</h2>
-          <div class="cols cols-73">
-            <div class="info-panel compact">
-              <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" aria-label="Ingest funnel">
-                <defs>
-                  <linearGradient id="funnel" x1="0.5" y1="0" x2="0.5" y2="1">
-                    <stop offset="0%" stop-color="rgba(124,108,255,0.25)"/>
-                    <stop offset="100%" stop-color="rgba(254,197,20,0.2)"/>
-                  </linearGradient>
-                </defs>
-                <path d="M60 30 L360 30 L320 90 L100 90 Z" fill="rgba(124,108,255,0.15)" stroke="rgba(124,108,255,0.4)" stroke-width="1.5"/>
-                <text x="210" y="58" text-anchor="middle" fill="#a89bff" font-size="13" font-weight="700" font-family="DM Sans, sans-serif">t-mobile.com · BFS crawl</text>
-                <text x="210" y="76" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">Jina Reader → markdown</text>
-                <path d="M210 90 V108" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-                <path d="M80 120 L340 120 L300 175 L120 175 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                <text x="210" y="145" text-anchor="middle" fill="#f4f4f5" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">Heading-aware chunks</text>
-                <text x="210" y="163" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">~1k chars · persona tags</text>
-                <path d="M210 175 V193" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-                <path d="M100 205 L320 205 L280 265 L140 265 Z" fill="url(#funnel)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/>
-                <text x="210" y="230" text-anchor="middle" fill="#fec514" font-size="12" font-weight="700" font-family="DM Sans, sans-serif">telco-tmobile-kb</text>
-                <text x="210" y="248" text-anchor="middle" fill="#a1a1aa" font-size="10" font-family="DM Sans, sans-serif">body_semantic · jina-embeddings-v3</text>
-                <path d="M210 265 V283" stroke="rgba(254,197,20,0.4)" stroke-width="1.5"/>
-                <rect x="110" y="288" width="200" height="40" rx="10" fill="rgba(254,197,20,0.12)" stroke="rgba(254,197,20,0.5)" stroke-width="1.5"/>
-                <text x="210" y="313" text-anchor="middle" fill="#fec514" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Agent Builder index_search</text>
-              </svg>
+          <p class="lead" style="margin-bottom: 0.45em">From public T-Mobile content to grounded Agent Builder search — four stages, one bootstrap script.</p>
+          <div class="pipeline-steps">
+            <div class="pipeline-step step-jina">
+              <span class="step-label">1 · Crawl</span>
+              <h4>t-mobile.com</h4>
+              <p>Jina Reader · BFS · markdown</p>
             </div>
-            <div>
-              <div class="card card-accent-jina" style="margin-bottom: 0.5em">
-                <h4>Crawl · <code>ingest/crawl.py</code></h4>
-                <p>BFS from seed URLs · Jina Reader API · persona tags from URL paths</p>
-              </div>
-              <div class="card card-accent-elastic" style="margin-bottom: 0.5em">
-                <h4>Index · <code>ingest/index.py</code></h4>
-                <p><code>semantic_text</code> field · Serverless-compatible bulk ingest · inference endpoint</p>
-              </div>
-              <div class="card card-accent-green">
-                <h4>Deploy · <code>agents/deploy.py</code></h4>
-                <p>Tool <code>telco-tmobile-kb-search</code> + 4 persona agents with markdown instructions</p>
-              </div>
-              <p class="callout"><strong>Grounding rule:</strong> search KB first, cite source URLs, never invent pricing or policy.</p>
+            <div class="pipeline-step step-chunk">
+              <span class="step-label">2 · Chunk</span>
+              <h4>~1k tokens</h4>
+              <p>Heading splits · persona tags</p>
+            </div>
+            <div class="pipeline-step step-index">
+              <span class="step-label">3 · Index</span>
+              <h4>telco-tmobile-kb</h4>
+              <p>semantic_text · jina-embeddings-v3</p>
+            </div>
+            <div class="pipeline-step step-agent">
+              <span class="step-label">4 · Deploy</span>
+              <h4>index_search tool</h4>
+              <p>4 persona agents · Agent Builder</p>
             </div>
           </div>
+          <div class="info-panel compact" style="margin-bottom: 0.45em">
+            <svg viewBox="0 0 900 100" xmlns="http://www.w3.org/2000/svg" aria-label="Pipeline flow">
+              <defs>
+                <marker id="pipeArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="rgba(255,255,255,0.35)"/>
+                </marker>
+              </defs>
+              <rect x="20" y="28" width="150" height="44" rx="10" fill="rgba(124,108,255,0.12)" stroke="rgba(124,108,255,0.4)" stroke-width="1.5"/>
+              <text x="95" y="48" text-anchor="middle" fill="#a89bff" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">ingest/crawl.py</text>
+              <text x="95" y="62" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">200 pages · seed URLs</text>
+              <path d="M175 50 H215" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#pipeArrow)"/>
+              <rect x="220" y="28" width="150" height="44" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+              <text x="295" y="48" text-anchor="middle" fill="#f4f4f5" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">ingest/chunk.py</text>
+              <text x="295" y="62" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">22k+ chunks</text>
+              <path d="M375 50 H415" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#pipeArrow)"/>
+              <rect x="420" y="28" width="150" height="44" rx="10" fill="rgba(254,197,20,0.1)" stroke="rgba(254,197,20,0.45)" stroke-width="1.5"/>
+              <text x="495" y="48" text-anchor="middle" fill="#fec514" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">ingest/index.py</text>
+              <text x="495" y="62" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">Serverless bulk</text>
+              <path d="M575 50 H615" stroke="rgba(255,255,255,0.3)" stroke-width="2" marker-end="url(#pipeArrow)"/>
+              <rect x="620" y="28" width="150" height="44" rx="10" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+              <text x="695" y="48" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">agents/deploy.py</text>
+              <text x="695" y="62" text-anchor="middle" fill="#a1a1aa" font-size="9" font-family="DM Sans, sans-serif">tools + personas</text>
+              <text x="820" y="54" fill="#71717a" font-size="10" font-family="DM Sans, sans-serif">→</text>
+              <rect x="835" y="34" width="50" height="32" rx="8" fill="rgba(226,0,116,0.12)" stroke="rgba(226,0,116,0.35)" stroke-width="1.5"/>
+              <text x="860" y="54" text-anchor="middle" fill="#ff6eb4" font-size="9" font-weight="700" font-family="DM Sans, sans-serif">/chat</text>
+            </svg>
+          </div>
+          <div class="card-grid">
+            <div class="card card-accent-jina">
+              <h4>Crawl · <code>ingest/crawl.py</code></h4>
+              <p>BFS from seed URLs · Jina Reader API · persona tags from URL paths</p>
+            </div>
+            <div class="card card-accent-elastic">
+              <h4>Index · <code>ingest/index.py</code></h4>
+              <p><code>semantic_text</code> · Serverless bulk ingest · <code>jina-embeddings-v3</code></p>
+            </div>
+            <div class="card card-accent-green">
+              <h4>Deploy · <code>agents/deploy.py</code></h4>
+              <p><code>telco-tmobile-kb-search</code> tool + 4 persona agents</p>
+            </div>
+          </div>
+          <p class="callout"><strong>Grounding rule:</strong> search KB first, cite source URLs, never invent pricing or policy · <code>./scripts/bootstrap-online.sh</code></p>
         </section>
 
         <!-- 6 · Personas -->
