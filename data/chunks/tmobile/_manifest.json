@@ -1,0 +1,5 @@
+{
+  "chunks": 2,
+  "source": "/Users/psimkins/opt/telco-agent/data/raw/tmobile",
+  "output": "/Users/psimkins/opt/telco-agent/data/chunks/tmobile"
+}

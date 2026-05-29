@@ -1,0 +1,30 @@
+[
+  {
+    "carrier": "tmobile",
+    "url": "https://www.t-mobile.com/support/test",
+    "title": "Test",
+    "section": "support",
+    "persona_tags": [
+      "care"
+    ],
+    "fetched_at": "2026-01-15T12:00:00Z",
+    "chunk_id": "https://www.t-mobile.com/support/test#chunk-1",
+    "heading": "Reset password",
+    "content": "Reset password\n\nUse forgot password link.",
+    "body_semantic": "Use forgot password link."
+  },
+  {
+    "carrier": "tmobile",
+    "url": "https://www.t-mobile.com/support/test",
+    "title": "Test",
+    "section": "support",
+    "persona_tags": [
+      "care"
+    ],
+    "fetched_at": "2026-01-15T12:00:00Z",
+    "chunk_id": "https://www.t-mobile.com/support/test#chunk-2",
+    "heading": "Verify",
+    "content": "Verify\n\nCheck SMS code.",
+    "body_semantic": "Check SMS code."
+  }
+]

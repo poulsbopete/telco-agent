@@ -1,0 +1,47 @@
+carriers:
+  tmobile:
+    display_name: T-Mobile
+    index: telco-tmobile-kb
+    theme:
+      accent: "#E20074"
+    roles:
+      noc:
+        label: NOC Engineer
+        agent_id: tmobile-noc-engineer
+        persona_file: tmobile-noc-engineer.md
+        description: Network outages, 5G/core diagnostics, coverage issues
+      care:
+        label: Customer Care
+        agent_id: tmobile-customer-care
+        persona_file: tmobile-customer-care.md
+        description: Plans, devices, account troubleshooting
+      billing:
+        label: Billing Ops
+        agent_id: tmobile-billing-ops
+        persona_file: tmobile-billing-ops.md
+        description: Charges, disputes, payment and invoice issues
+      retail:
+        label: Retail Sales
+        agent_id: tmobile-retail-sales
+        persona_file: tmobile-retail-sales.md
+        description: Promotions, upgrades, in-store offers
+  att:
+    display_name: AT&T
+    enabled: false
+    index: telco-att-kb
+    roles: {}
+  verizon:
+    display_name: Verizon
+    enabled: false
+    index: telco-verizon-kb
+    roles: {}
+
+tools:
+  tmobile_kb_search:
+    id: telco-tmobile-kb-search
+    type: index_search
+    pattern: telco-tmobile-kb
+    description: >
+      Search the T-Mobile knowledge base for plans, support articles, business
+      offerings, coverage, billing, and retail promotions. Always search before
+      answering factual questions.

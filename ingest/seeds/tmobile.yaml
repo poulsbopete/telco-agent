@@ -1,0 +1,13 @@
+carrier: tmobile
+display_name: T-Mobile
+allow_domains:
+  - t-mobile.com
+  - www.t-mobile.com
+seeds:
+  - https://www.t-mobile.com/
+  - https://www.t-mobile.com/support
+  - https://www.t-mobile.com/business
+  - https://www.t-mobile.com/coverage/coverage-map
+  - https://www.t-mobile.com/cell-phone-plans
+max_depth: 3
+max_pages: 200

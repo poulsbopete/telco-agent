@@ -1,0 +1,14 @@
+.env
+.env.local
+*.pyc
+__pycache__/
+.venv/
+venv/
+node_modules/
+.next/
+web/.next/
+*.tsbuildinfo
+data/raw/
+data/snapshots/tmobile/telco-tmobile-kb.json
+agents/state/agents.json
+.DS_Store
