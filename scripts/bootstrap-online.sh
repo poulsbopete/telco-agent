@@ -32,7 +32,7 @@ if [ ! -d .venv ]; then
 fi
 # shellcheck source=/dev/null
 source .venv/bin/activate
-pip -q install -r requirements.txt
+pip -q install -r requirements-ingest.txt
 
 echo "== Step 1: Crawl T-Mobile with Jina Reader =="
 python ingest/crawl.py

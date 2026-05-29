@@ -92,9 +92,10 @@ npm run dev
 
 Deploy to Vercel:
 
-1. Import the `web/` directory as a project
-2. Set `KIBANA_BASE_URL`, `KIBANA_API_KEY`, `DEMO_MODE=online`
-3. Deploy
+1. Import the repo at [vercel.com/new](https://vercel.com/new) (repo root — root `vercel.json` builds `web/`)
+2. Confirm framework is **Next.js**, not Python
+3. Set env vars in the Vercel project: `KIBANA_BASE_URL`, `KIBANA_API_KEY`, `DEMO_MODE=online`
+4. Open **`/chat`** after deploy
 
 ### Configure Jina LLM in Kibana
 

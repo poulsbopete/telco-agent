@@ -1,0 +1,11 @@
+# Python ingest/agents — not deployed to Vercel (Next.js app is in web/)
+ingest/
+agents/
+data/
+.venv/
+venv/
+requirements-ingest.txt
+scripts/
+docker/
+docs/
+slides/

@@ -11,6 +11,7 @@ node_modules/
 web/.next/
 *.tsbuildinfo
 data/raw/
+data/chunks/
 data/snapshots/tmobile/telco-tmobile-kb.json
 agents/state/agents.json
 .DS_Store

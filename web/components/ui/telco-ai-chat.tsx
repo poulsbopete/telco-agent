@@ -10,11 +10,20 @@ import {
 } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import { LoaderIcon, SendIcon, Sparkles } from "lucide-react";
+import {
+  Headphones,
+  LoaderIcon,
+  Network,
+  Receipt,
+  RotateCcw,
+  SendIcon,
+  Sparkles,
+  Store,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { extractAssistantMessage } from "@/lib/extract-assistant-message";
 import {
   CARRIERS,
-  STARTER_PROMPTS,
   getCarrier,
   getRole,
   type TelcoCarrier,
@@ -34,35 +43,36 @@ type DemoConfig = {
   ollamaConfigured: boolean;
 };
 
+const ROLE_ICONS = {
+  network: Network,
+  headset: Headphones,
+  receipt: Receipt,
+  store: Store,
+} as const;
+
 function newMsgId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function extractAssistantMessage(data: unknown): string {
-  if (!data || typeof data !== "object") return "";
-  const o = data as Record<string, unknown>;
-  if (typeof o.message === "string") return o.message;
-  if (typeof o.output === "string") return o.output;
-  if (o.response && typeof o.response === "object") {
-    const r = o.response as Record<string, unknown>;
-    if (typeof r.message === "string") return r.message;
-  }
-  return "";
-}
-
 export function TelcoAIChat() {
   const [carrierKey, setCarrierKey] = useState("tmobile");
-  const [roleKey, setRoleKey] = useState("care");
+  const [roleKey, setRoleKey] = useState("noc");
   const [value, setValue] = useState("");
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [isSending, setIsSending] = useState(false);
-  const [demoConfig, setDemoConfig] = useState<DemoConfig>({ mode: "online", defaultAgentConfigured: false, ollamaConfigured: false });
+  const [demoConfig, setDemoConfig] = useState<DemoConfig>({
+    mode: "online",
+    defaultAgentConfigured: false,
+    ollamaConfigured: false,
+  });
   const conversationIdRef = useRef<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const carrier = useMemo(() => getCarrier(carrierKey) ?? CARRIERS[0], [carrierKey]);
-  const role = useMemo(() => getRole(carrierKey, roleKey) ?? carrier.roles[0], [carrierKey, roleKey, carrier]);
-  const starters = STARTER_PROMPTS[carrierKey] ?? [];
+  const role = useMemo(
+    () => getRole(carrierKey, roleKey) ?? carrier.roles[0],
+    [carrierKey, roleKey, carrier]
+  );
 
   const chatEndpoint = demoConfig.mode === "offline" ? "/api/rag" : "/api/converse";
   const streamEndpoint = converseStreamUrl("/api/converse");
@@ -78,10 +88,14 @@ export function TelcoAIChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isSending]);
 
-  useEffect(() => {
+  const resetConversation = useCallback(() => {
     conversationIdRef.current = null;
     setMessages([]);
-  }, [carrierKey, roleKey, demoConfig.mode]);
+  }, []);
+
+  useEffect(() => {
+    resetConversation();
+  }, [roleKey, demoConfig.mode, resetConversation]);
 
   const submitMessage = useCallback(
     async (text: string) => {
@@ -117,7 +131,9 @@ export function TelcoAIChat() {
             appendError(typeof data.message === "string" ? data.message : `HTTP ${r.status}`);
             return;
           }
-          const reply = extractAssistantMessage(data) || "(Empty reply)";
+          const reply =
+            extractAssistantMessage(data) ||
+            (typeof data.message === "string" ? data.message : "(Empty reply)");
           setMessages((m) => [...m, { id: newMsgId(), role: "assistant", text: reply }]);
           return;
         }
@@ -128,11 +144,22 @@ export function TelcoAIChat() {
         try {
           const streamResp = await fetch(streamEndpoint, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "kbn-xsrf": "true" },
+            headers: {
+              "Content-Type": "application/json",
+              "kbn-xsrf": "true",
+              Accept: "text/event-stream",
+            },
             body: JSON.stringify(body),
           });
 
-          if (streamResp.ok && streamResp.body) {
+          const ct = streamResp.headers.get("content-type") ?? "";
+          const useStream =
+            streamResp.ok &&
+            streamResp.body &&
+            (/\btext\/event-stream\b/i.test(ct) ||
+              /\bapplication\/octet-stream\b/i.test(ct));
+
+          if (useStream) {
             streamed = true;
             setMessages((m) => [...m, { id: streamId, role: "assistant", text: "" }]);
             let buffer = "";
@@ -211,30 +238,49 @@ export function TelcoAIChat() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center px-4 py-8 text-white sm:px-6">
-      <div className="relative mx-auto w-full max-w-5xl space-y-6">
+    <div className="relative min-h-screen w-full px-4 py-8 text-white sm:px-6">
+      <div className="relative mx-auto w-full max-w-6xl space-y-6">
         <header className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">
             <Sparkles className="h-3.5 w-3.5" style={{ color: carrier.accent }} />
-            {demoConfig.mode === "offline" ? "Offline RAG demo" : "Elastic Agent Builder"}
-            {demoConfig.mode === "offline" && !demoConfig.ollamaConfigured && " · retrieval-only"}
+            {demoConfig.mode === "offline" ? "Offline RAG" : "Elastic Agent Builder"}
           </div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Telco Persona Agents
+            T-Mobile Persona Agents
           </h1>
           <p className="mx-auto max-w-2xl text-sm text-white/50">
-            Role-based assistants grounded in carrier knowledge indexed with Jina embeddings in
-            Elasticsearch. Pick a carrier and role, then ask questions grounded in the knowledge base.
+            Select a role below. Each agent connects to a dedicated Elastic Agent Builder
+            assistant with T-Mobile knowledge base search.
           </p>
         </header>
 
-        <PersonaPicker
+        <AgentSelector
           carrier={carrier}
           carrierKey={carrierKey}
           roleKey={roleKey}
           onCarrierChange={setCarrierKey}
           onRoleChange={setRoleKey}
         />
+
+        {role && (
+          <div
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3"
+            style={{ borderColor: `${carrier.accent}44`, backgroundColor: `${carrier.accent}11` }}
+          >
+            <div>
+              <p className="text-sm font-semibold text-white">{role.label}</p>
+              <p className="font-mono text-xs text-white/50">agent_id: {role.agentId}</p>
+            </div>
+            <button
+              type="button"
+              onClick={resetConversation}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition hover:bg-white/10"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              New conversation
+            </button>
+          </div>
+        )}
 
         <motion.div
           className="overflow-hidden rounded-2xl border border-white/10 bg-black/50 shadow-2xl backdrop-blur-xl"
@@ -243,10 +289,10 @@ export function TelcoAIChat() {
         >
           <div className="border-b border-white/10 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
-              Starter prompts · {role.label}
+              Starter prompts · {role?.label}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {starters.map((s) => (
+              {role?.starters.map((s) => (
                 <button
                   key={s.title}
                   type="button"
@@ -260,11 +306,11 @@ export function TelcoAIChat() {
             </div>
           </div>
 
-          <div className="max-h-[min(50vh,28rem)] space-y-3 overflow-y-auto px-4 py-4">
+          <div className="max-h-[min(52vh,32rem)] space-y-3 overflow-y-auto px-4 py-4">
             {messages.length === 0 && (
               <p className="rounded-lg border border-dashed border-white/10 px-3 py-6 text-center text-sm text-white/35">
-                Ask about {carrier.displayName} as a {role.label}. Conversation resets when you
-                change persona.
+                Chat with the <strong className="text-white/60">{role?.label}</strong> agent.
+                Answers are grounded in the T-Mobile knowledge index via Agent Builder.
               </p>
             )}
             {messages.map((msg) => (
@@ -278,7 +324,7 @@ export function TelcoAIChat() {
                 )}
               >
                 <span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-wider text-white/45">
-                  {msg.role === "user" ? "You" : msg.role === "assistant" ? role.label : "Error"}
+                  {msg.role === "user" ? "You" : msg.role === "assistant" ? role?.label : "Error"}
                 </span>
                 {msg.role === "assistant" ? (
                   <div className="prose prose-invert prose-sm max-w-none">
@@ -298,7 +344,7 @@ export function TelcoAIChat() {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={`Ask the ${role.label}…`}
+                placeholder={`Message ${role?.label ?? "agent"}…`}
                 rows={2}
                 disabled={isSending}
                 className="min-h-[3.5rem] flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-tmo/50 focus:outline-none"
@@ -325,7 +371,7 @@ export function TelcoAIChat() {
   );
 }
 
-function PersonaPicker({
+function AgentSelector({
   carrier,
   carrierKey,
   roleKey,
@@ -339,8 +385,8 @@ function PersonaPicker({
   onRoleChange: (key: string) => void;
 }) {
   return (
-    <div className="grid gap-3 rounded-xl border border-white/10 bg-black/40 p-4 sm:grid-cols-2">
-      <label className="space-y-1.5">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Carrier</span>
         <select
           value={carrierKey}
@@ -349,7 +395,7 @@ function PersonaPicker({
             onCarrierChange(e.target.value);
             if (next?.roles[0]) onRoleChange(next.roles[0].key);
           }}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white"
         >
           {CARRIERS.map((c) => (
             <option key={c.key} value={c.key} disabled={!c.enabled}>
@@ -358,21 +404,41 @@ function PersonaPicker({
             </option>
           ))}
         </select>
-      </label>
-      <label className="space-y-1.5">
-        <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Role</span>
-        <select
-          value={roleKey}
-          onChange={(e) => onRoleChange(e.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
-        >
-          {carrier.roles.map((r: TelcoRole) => (
-            <option key={r.key} value={r.key}>
-              {r.label} — {r.description}
-            </option>
-          ))}
-        </select>
-      </label>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {carrier.roles.map((r: TelcoRole) => {
+          const Icon = ROLE_ICONS[r.icon];
+          const active = roleKey === r.key;
+          return (
+            <button
+              key={r.key}
+              type="button"
+              onClick={() => onRoleChange(r.key)}
+              className={cn(
+                "rounded-xl border p-4 text-left transition",
+                active
+                  ? "border-tmo bg-tmo/15 ring-1 ring-tmo/40"
+                  : "border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5"
+              )}
+            >
+              <div className="mb-2 flex items-center gap-2">
+                <span
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-lg",
+                    active ? "bg-tmo/30 text-white" : "bg-white/10 text-white/70"
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="font-semibold text-sm text-white">{r.label}</span>
+              </div>
+              <p className="text-xs text-white/50">{r.description}</p>
+              <p className="mt-2 font-mono text-[0.65rem] text-white/35">{r.agentId}</p>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

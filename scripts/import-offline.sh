@@ -38,7 +38,6 @@ echo "Recreating index ${INDEX} on local ES..."
 curl -fsS -X DELETE "${LOCAL_ES}/${INDEX}" >/dev/null 2>&1 || true
 
 curl -fsS -X PUT "${LOCAL_ES}/${INDEX}" -H 'Content-Type: application/json' -d '{
-  "settings": { "number_of_shards": 1, "number_of_replicas": 0 },
   "mappings": {
     "properties": {
       "carrier": { "type": "keyword" },
